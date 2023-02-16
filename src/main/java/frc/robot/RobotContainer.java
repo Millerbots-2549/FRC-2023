@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.TeleopDrive;
+import frc.robot.commands.TestVolts;
 import frc.robot.subsystems.DriveSubsystem;
 
 /**
@@ -82,6 +83,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     //Runs this command in autonomous
     m_driveSubsystem.resetOdometry(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
-    return getRamseteCommand(TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)), List.of(new Translation2d(0.5, 0.5), new Translation2d(1, -0.5)), new Pose2d(1.5, 0, new Rotation2d(0)), m_driveSubsystem.getTrajectoryConfig())).andThen(() -> m_driveSubsystem.tankDriveVolts(0, 0));
+    return getRamseteCommand(TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)), List.of(new Translation2d(1, 1), new Translation2d(2, -1)), new Pose2d(3, 1, new Rotation2d(Math.PI/2)), m_driveSubsystem.getTrajectoryConfig())).andThen(() -> m_driveSubsystem.tankDriveVolts(0, 0));
   }
 }

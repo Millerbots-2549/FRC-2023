@@ -4,24 +4,17 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class TeleopDrive extends CommandBase {
+public class TestVolts extends CommandBase {
   private final DriveSubsystem m_driveSubsystem;
-  private final DoubleSupplier m_forwardSpeed;
-  private final DoubleSupplier m_rotationSpeed;
+  /** Creates a new TestVolts. */
+  public TestVolts(DriveSubsystem drive) {
 
-  /** Creates a new TeleopDrive. */
-  public TeleopDrive(DriveSubsystem subsystem, DoubleSupplier fwd, DoubleSupplier rot) {
+    m_driveSubsystem = drive;
     // Use addRequirements() here to declare subsystem dependencies.
-    m_driveSubsystem = subsystem;
-    m_forwardSpeed = fwd;
-    m_rotationSpeed = rot;
-
-    addRequirements(subsystem);
+    addRequirements(m_driveSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -31,8 +24,7 @@ public class TeleopDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double correctedFwdSpeed = -1 * m_forwardSpeed.getAsDouble(); // Y axis of xbox joysticks is down-positive for some reason
-    m_driveSubsystem.arcadeDrive(correctedFwdSpeed, m_rotationSpeed.getAsDouble());
+    m_driveSubsystem.tankDriveVolts(3, 3);
   }
 
   // Called once the command ends or is interrupted.
