@@ -10,6 +10,8 @@ import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,6 +19,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -25,8 +28,9 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.DriveConstants;
+import static frc.robot.Constants.DriveConstants.*;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.VisionContainer;
 
@@ -35,14 +39,14 @@ public class DriveSubsystem extends SubsystemBase {
   //Motors on left side of drive
   private final MotorControllerGroup m_leftMotors = 
     new MotorControllerGroup(
-      new WPI_TalonSRX(DriveConstants.kLeftMotor1Port), 
-      new WPI_TalonSRX(DriveConstants.kLeftMotor2Port));
+      new WPI_TalonSRX(kLeftMotor1Port), 
+      new WPI_TalonSRX(kLeftMotor2Port));
 
   //Motors on right side of drive
   private final MotorControllerGroup m_rightMotors = 
     new MotorControllerGroup(
-      new WPI_TalonSRX(DriveConstants.kRightMotor1Port), 
-      new WPI_TalonSRX(DriveConstants.kRightMotor2Port));
+      new WPI_TalonSRX(kRightMotor1Port), 
+      new WPI_TalonSRX(kRightMotor2Port));
 
   //Robot's drive
   private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
@@ -50,21 +54,21 @@ public class DriveSubsystem extends SubsystemBase {
   // Left/right side drive encoders
   private final Encoder m_leftEncoder =
     new Encoder(
-      DriveConstants.kLeftEncoderPorts[0], 
-      DriveConstants.kLeftEncoderPorts[1],
-      DriveConstants.kLeftEncoderReversed);
+      kLeftEncoderPorts[0], 
+      kLeftEncoderPorts[1],
+      kLeftEncoderReversed);
   private final Encoder m_rightEncoder =
     new Encoder(
-      DriveConstants.kRightEncoderPorts[0], 
-      DriveConstants.kRightEncoderPorts[1],
-      DriveConstants.kRightEncoderReversed);
+      kRightEncoderPorts[0], 
+      kRightEncoderPorts[1],
+      kRightEncoderReversed);
 
   // Gyrometer sensor
   private final Gyro m_gyro = new ADXRS450_Gyro();
 
   // Object that converts between robot speeds and wheel speeds
   private final DifferentialDriveKinematics m_kinematics = 
-    new DifferentialDriveKinematics(DriveConstants.kTrackWidthMeters);
+    new DifferentialDriveKinematics(kTrackWidthMeters);
 
   // Object that estimates robot's pose with MATH (look it up if you're curious)
   private final DifferentialDrivePoseEstimator m_poseEstimator = 
@@ -84,8 +88,8 @@ public class DriveSubsystem extends SubsystemBase {
   public DriveSubsystem() {
     m_rightMotors.setInverted(true);
 
-    m_leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
-    m_rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
+    m_leftEncoder.setDistancePerPulse(kEncoderDistancePerPulse);
+    m_rightEncoder.setDistancePerPulse(kEncoderDistancePerPulse);
   
     resetEncoders();
 
@@ -206,9 +210,9 @@ public class DriveSubsystem extends SubsystemBase {
   public DifferentialDriveVoltageConstraint getVoltageConstraint() {
     return new DifferentialDriveVoltageConstraint(
       new SimpleMotorFeedforward(
-        DriveConstants.ksVolts, 
-        DriveConstants.kvVoltSecondsPerMeter, 
-        DriveConstants.kaVoltSecondsSquaredPerMeter), 
+        ksVolts, 
+        kvVoltSecondsPerMeter, 
+        kaVoltSecondsSquaredPerMeter), 
         m_kinematics, 
         10);
   }
@@ -216,8 +220,8 @@ public class DriveSubsystem extends SubsystemBase {
   // Creates config for robot trajectories
   public TrajectoryConfig getTrajectoryConfig() {
     return new TrajectoryConfig(
-      DriveConstants.kMaxSpeedMetersPerSecond, 
-      DriveConstants.kMaxAccelerationMetersPerSecondSquared)
+      kMaxSpeedMetersPerSecond, 
+      kMaxAccelerationMetersPerSecondSquared)
       .setKinematics(m_kinematics)
       .addConstraint(getVoltageConstraint());
   }

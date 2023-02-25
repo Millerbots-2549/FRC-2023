@@ -6,21 +6,20 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 
-public class TeleopDrive extends CommandBase {
-  private final DriveSubsystem m_driveSubsystem;
-  private final DoubleSupplier m_forwardSpeed;
-  private final DoubleSupplier m_rotationSpeed;
+public class TeleopElevator extends CommandBase {
+  private final ElevatorSubsystem m_elevatorSubsystem;
+  private final DoubleSupplier m_elevatorSpeedSupplier;
 
-  /** Creates a new TeleopDrive. */
-  public TeleopDrive(DriveSubsystem subsystem, DoubleSupplier fwd, DoubleSupplier rot) {
+  /** Creates a new TeleopElevator. */
+  public TeleopElevator(ElevatorSubsystem subsystem, DoubleSupplier speed) {
+    m_elevatorSubsystem = subsystem;
+    m_elevatorSpeedSupplier = speed;
+
     // Use addRequirements() here to declare subsystem dependencies.
-    m_driveSubsystem = subsystem;
-    m_forwardSpeed = fwd;
-    m_rotationSpeed = rot;
-
     addRequirements(subsystem);
   }
 
@@ -31,9 +30,8 @@ public class TeleopDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double correctedFwdSpeed = -1 * m_forwardSpeed.getAsDouble(); 
-    double correctedRotSpeed = -1 * m_rotationSpeed.getAsDouble();
-    m_driveSubsystem.arcadeDrive(correctedFwdSpeed, correctedRotSpeed);
+    m_elevatorSubsystem.setElevatorMotorSpeed(m_elevatorSpeedSupplier.getAsDouble());
+    SmartDashboard.putNumber("elevator speed", m_elevatorSpeedSupplier.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.

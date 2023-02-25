@@ -4,23 +4,18 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.Constants.ManipulatorConstants;
+import frc.robot.subsystems.ArmSubsystem;
 
-public class TeleopDrive extends CommandBase {
-  private final DriveSubsystem m_driveSubsystem;
-  private final DoubleSupplier m_forwardSpeed;
-  private final DoubleSupplier m_rotationSpeed;
+public class BringArmIn extends CommandBase {
 
-  /** Creates a new TeleopDrive. */
-  public TeleopDrive(DriveSubsystem subsystem, DoubleSupplier fwd, DoubleSupplier rot) {
+  private final ArmSubsystem m_armSubsystem;
+  
+  /** Creates a new BringArmIn. */
+  public BringArmIn(ArmSubsystem subsystem) {
+    m_armSubsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    m_driveSubsystem = subsystem;
-    m_forwardSpeed = fwd;
-    m_rotationSpeed = rot;
-
     addRequirements(subsystem);
   }
 
@@ -31,18 +26,18 @@ public class TeleopDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double correctedFwdSpeed = -1 * m_forwardSpeed.getAsDouble(); 
-    double correctedRotSpeed = -1 * m_rotationSpeed.getAsDouble();
-    m_driveSubsystem.arcadeDrive(correctedFwdSpeed, correctedRotSpeed);
+    m_armSubsystem.setArmMotorSpeed(-ManipulatorConstants.kArmMotorAutoSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_armSubsystem.setArmMotorSpeed(0.0);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return Math.abs(m_armSubsystem.getArmMotorCurrent()) > ManipulatorConstants.kArmMotorStallCurrent;
   }
 }

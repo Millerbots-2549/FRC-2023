@@ -6,21 +6,21 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ArmSubsystem;
 
-public class TeleopDrive extends CommandBase {
-  private final DriveSubsystem m_driveSubsystem;
-  private final DoubleSupplier m_forwardSpeed;
-  private final DoubleSupplier m_rotationSpeed;
+public class TeleopArm extends CommandBase {
 
-  /** Creates a new TeleopDrive. */
-  public TeleopDrive(DriveSubsystem subsystem, DoubleSupplier fwd, DoubleSupplier rot) {
+  private final ArmSubsystem m_armSubsystem;
+  private final DoubleSupplier m_armSpeedSupplier;
+
+  /** Creates a new ManualArmControl. */
+  public TeleopArm(ArmSubsystem subsystem, DoubleSupplier speed) {
+    m_armSubsystem = subsystem;
+    m_armSpeedSupplier = speed;
+
     // Use addRequirements() here to declare subsystem dependencies.
-    m_driveSubsystem = subsystem;
-    m_forwardSpeed = fwd;
-    m_rotationSpeed = rot;
-
     addRequirements(subsystem);
   }
 
@@ -31,9 +31,8 @@ public class TeleopDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double correctedFwdSpeed = -1 * m_forwardSpeed.getAsDouble(); 
-    double correctedRotSpeed = -1 * m_rotationSpeed.getAsDouble();
-    m_driveSubsystem.arcadeDrive(correctedFwdSpeed, correctedRotSpeed);
+    m_armSubsystem.setArmMotorSpeed(-m_armSpeedSupplier.getAsDouble());
+    SmartDashboard.putNumber("arm speed", -m_armSpeedSupplier.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.

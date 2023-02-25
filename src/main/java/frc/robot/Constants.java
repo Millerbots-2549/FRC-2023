@@ -46,16 +46,36 @@ public final class Constants {
         public static final double kMaxSpeedMetersPerSecond = 4; 
         public static final double kMaxAccelerationMetersPerSecondSquared = 1;
 
-        public static final double kRamseteB = 0;
-        public static final double kRamseteZeta = 0;
-
         public static final double kTrackWidthMeters = Units.inchesToMeters(21.5);
         public static double kMaxJoystickAcceleration;
     }
 
+    public static final class ManipulatorConstants {
+        public static final int kArmMotorPort = 8;
+        public static final int kLeftClampMotorPort = 1;
+        public static final int kRightClampMotorPort = 2;
+        public static final int kElevatorMotorPort = 9;
+        public static final int kClampSolenoidPort = 0;
+
+        public static final double kArmMotorStallCurrent = 16.0;
+        public static final double kArmMotorAutoSpeed = 0.5;
+
+        public static final double kElevatorMotorStallCurrent = 0.0; // TODO: add
+        public static final double kElevatorMotorAutoSpeed = 0.75;
+
+        public static final double kElevatorIntakePosition = 135.0; // TODO: CHECCCCCKK
+        public static final double kElevatorLowNodePosition = 110.0;
+        public static final double kElevatorMidConePosition = 30.0;
+        public static final double kElevatorHighPosition = 0.0;
+
+        public static final double kElevatorMotorP = 0.0;
+        public static final double kElevatorMotorI = 0.0;
+        public static final double kElevatorMotorD = 0.0;
+    }
+
     public static final class VisionConstants {
         public static final String kCameraName = "OV5647";
-        public static final Transform3d kRobotToCamTransform = new Transform3d(); // TODO: add
+        public static final Transform3d kRobotToCamTransform = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)); // TODO: add
 
         // Defining objects representing AprilTags on the field
         public static final Translation3d[] AprilTagLocations = {
