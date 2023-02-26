@@ -21,8 +21,8 @@ import static frc.robot.Constants.ManipulatorConstants.*;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class PlaceHybridNode extends SequentialCommandGroup {
   /** Creates a new PlaceHybridNode. */
-  public PlaceHybridNode(ArmSubsystem arm, ClampSubsystem clamp, boolean cube) {
-    if(cube)
+  public PlaceHybridNode(ArmSubsystem arm, ClampSubsystem clamp) {
+    if(clamp.isClampInCubeMode())
       addCommands(
         new ClampShoot(clamp).withTimeout(kClampShootDuration),
         new WaitCommand(kPlaceCommandWaitTime)

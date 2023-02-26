@@ -34,6 +34,10 @@ import frc.robot.commands.TeleopArm;
 import frc.robot.commands.TeleopClamp;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.commands.TeleopElevator;
+import frc.robot.commands.sequences.GrabFromHumanPlayer;
+import frc.robot.commands.sequences.Intake;
+import frc.robot.commands.sequences.PlaceHybridNode;
+import frc.robot.commands.sequences.PlaceMidNode;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClampSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -59,7 +63,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     m_driveSubsystem.setDefaultCommand(new TeleopDrive(m_driveSubsystem, m_driverController::getLeftY, m_driverController::getLeftX));
-    m_clampSubsystem.setDefaultCommand(new TeleopClamp(m_clampSubsystem, m_manipulatorController::getAButtonPressed, m_manipulatorController::getRightTriggerAxis, m_manipulatorController::getBButton));
+    m_clampSubsystem.setDefaultCommand(new TeleopClamp(m_clampSubsystem, m_manipulatorController::getLeftBumperPressed, m_manipulatorController::getLeftTriggerAxis, m_manipulatorController::getRightBumper));
     m_armSubsystem.setDefaultCommand(new TeleopArm(m_armSubsystem, m_manipulatorController::getLeftY));
     m_elevatorSubsystem.setDefaultCommand(new TeleopElevator(m_elevatorSubsystem, m_manipulatorController::getRightY));
 
@@ -73,11 +77,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureBindings() {
-    new POVButton(m_manipulatorController, 0).onTrue(new BringArmIn(m_armSubsystem).andThen(new BringArmOut(m_armSubsystem).withTimeout(1.5)));
-    new POVButton(m_manipulatorController, 90).onTrue(new BringArmIn(m_armSubsystem).andThen(new BringArmOut(m_armSubsystem).withTimeout(1.0)));
-    new POVButton(m_manipulatorController, 270).onTrue(new BringArmIn(m_armSubsystem).andThen(new BringArmOut(m_armSubsystem).withTimeout(0.5)));
-    new POVButton(m_manipulatorController, 180).onTrue(new BringArmIn(m_armSubsystem));
-    new JoystickButton(m_manipulatorController, Button.kRightBumper.value).onTrue(new InstantCommand(m_clampSubsystem::toggleSolenoid));
+    new JoystickButton(m_manipulatorController, Button.kA.value).onTrue(new Intake(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController::getLeftBumperPressed));
+    new JoystickButton(m_manipulatorController, Button.kY.value).onTrue(new GrabFromHumanPlayer(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController::getBButtonPressed));
+
+    new POVButton(m_manipulatorController, 0).onTrue(new PlaceHybridNode(m_armSubsystem, m_clampSubsystem));
+    new POVButton(m_manipulatorController, 180).onTrue(new PlaceMidNode(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem));
   }
 
   // Generates Ramsete command, used for trajectories

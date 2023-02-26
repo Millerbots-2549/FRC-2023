@@ -21,8 +21,8 @@ import static frc.robot.Constants.ManipulatorConstants.*;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class PlaceMidNode extends SequentialCommandGroup {
   /** Creates a new PlaceMidNode. */
-  public PlaceMidNode(ArmSubsystem arm, ElevatorSubsystem elevator, ClampSubsystem clamp, boolean cube) {
-    if(cube)
+  public PlaceMidNode(ArmSubsystem arm, ElevatorSubsystem elevator, ClampSubsystem clamp) {
+    if(clamp.isClampInCubeMode())
       addCommands(
         new ParallelCommandGroup(
           new BringElevatorPID(elevator, kElevatorMidCubePosistion),

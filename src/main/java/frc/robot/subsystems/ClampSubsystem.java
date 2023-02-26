@@ -47,6 +47,10 @@ public class ClampSubsystem extends SubsystemBase {
     }
   }
 
+  public boolean isClampInCubeMode() {
+    return m_clampSolenoid.get();
+  }
+
   public void setClampMotorSpeeds(double left, double right) {
     m_leftClampMotor.set(left);
     m_rightClampMotor.set(right);
