@@ -27,11 +27,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import static frc.robot.Constants.DriveConstants.*;
 import static frc.robot.Constants.ManipulatorConstants.*;
-import frc.robot.Constants.ManipulatorConstants;
 import frc.robot.commands.AutoPreload;
 import frc.robot.commands.BringArmIn;
 import frc.robot.commands.BringArmOut;
-import frc.robot.commands.BringElevatorUp;
 import frc.robot.commands.TeleopArm;
 import frc.robot.commands.TeleopClamp;
 import frc.robot.commands.TeleopDrive;
@@ -60,16 +58,14 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
     m_driveSubsystem.setDefaultCommand(new TeleopDrive(m_driveSubsystem, m_driverController::getLeftY, m_driverController::getLeftX));
     m_clampSubsystem.setDefaultCommand(new TeleopClamp(m_clampSubsystem, m_manipulatorController::getAButtonPressed, m_manipulatorController::getRightTriggerAxis, m_manipulatorController::getBButton));
-    m_armSubsystem.setDefaultCommand(new TeleopArm(m_armSubsystem, m_manipulatorController::getXButton, m_manipulatorController::getYButton));
+    m_armSubsystem.setDefaultCommand(new TeleopArm(m_armSubsystem, m_manipulatorController::getLeftY));
     m_elevatorSubsystem.setDefaultCommand(new TeleopElevator(m_elevatorSubsystem, m_manipulatorController::getRightY));
 
     // Configure the button bindings
     configureBindings();
   }
-
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -82,12 +78,6 @@ public class RobotContainer {
     new POVButton(m_manipulatorController, 270).onTrue(new BringArmIn(m_armSubsystem).andThen(new BringArmOut(m_armSubsystem).withTimeout(0.5)));
     new POVButton(m_manipulatorController, 180).onTrue(new BringArmIn(m_armSubsystem));
     new JoystickButton(m_manipulatorController, Button.kRightBumper.value).onTrue(new InstantCommand(m_clampSubsystem::toggleSolenoid));
-
-    //new JoystickButton(m_manipulatorController, Button.kLeftBumper.value).onTrue(new BringElevatorUp(m_elevatorSubsystem));
-    //new JoystickButton(m_manipulatorController, Button.kA.value).onTrue(new PIDCommand(new PIDController(kElevatorMotorP, kElevatorMotorI, kElevatorMotorD), m_elevatorSubsystem::getPosition, kElevatorIntakePosition, m_elevatorSubsystem::setElevatorMotorSpeed, m_elevatorSubsystem));
-    //new JoystickButton(m_manipulatorController, Button.kB.value).onTrue(new PIDCommand(new PIDController(kElevatorMotorP, kElevatorMotorI, kElevatorMotorD), m_elevatorSubsystem::getPosition, kElevatorLowNodePosition, m_elevatorSubsystem::setElevatorMotorSpeed, m_elevatorSubsystem));
-    //new JoystickButton(m_manipulatorController, Button.kX.value).onTrue(new PIDCommand(new PIDController(kElevatorMotorP, kElevatorMotorI, kElevatorMotorD), m_elevatorSubsystem::getPosition, kElevatorMidConePosition, m_elevatorSubsystem::setElevatorMotorSpeed, m_elevatorSubsystem));
-    //new JoystickButton(m_manipulatorController, Button.kY.value).onTrue(new PIDCommand(new PIDController(kElevatorMotorP, kElevatorMotorI, kElevatorMotorD), m_elevatorSubsystem::getPosition, kElevatorHighPosition, m_elevatorSubsystem::setElevatorMotorSpeed, m_elevatorSubsystem));
   }
 
   // Generates Ramsete command, used for trajectories
