@@ -5,17 +5,22 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ManipulatorConstants;
+import static frc.robot.Constants.ManipulatorConstants.*;
 
 public class ArmSubsystem extends SubsystemBase {
+  private final CANSparkMax m_armMotor;
+  private final RelativeEncoder m_armEncoder;
 
-  private final WPI_TalonSRX m_armMotor;
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
-    m_armMotor = new WPI_TalonSRX(ManipulatorConstants.kArmMotorPort);
+    m_armMotor = new CANSparkMax(kArmMotorPort, MotorType.kBrushed);
+    m_armEncoder = m_armMotor.getEncoder();
   }
 
   @Override
@@ -27,8 +32,12 @@ public class ArmSubsystem extends SubsystemBase {
     m_armMotor.set(speed);
   }
 
+  public double getArmPosition() {
+    return m_armEncoder.getPosition();
+  }
+
   public double getArmMotorCurrent() {
-    SmartDashboard.putNumber("arm current", m_armMotor.getStatorCurrent());
-    return m_armMotor.getStatorCurrent();
+    SmartDashboard.putNumber("arm current", m_armMotor.getOutputCurrent());
+    return m_armMotor.getOutputCurrent();
   }
 }

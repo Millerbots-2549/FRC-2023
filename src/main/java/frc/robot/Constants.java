@@ -59,20 +59,41 @@ public final class Constants {
 
         public static final double kArmMotorStallCurrent = 16.0;
         public static final double kArmMotorAutoSpeed = 0.5;
+        public static final double kArmMotorGrabSpeed = 0.2;
+
+        public static final double kArmInsidePosition = 0.0;
+        public static final double kArmBumperPosistion = 0.0;
+        public static final double kArmIntakePosition = 0.0;
+        public static final double kArmMidCubePosition = 0.0;
+        public static final double kArmMidConePosition = 0.0;
+
+        public static final double kArmMotorP = 0.0;
+        public static final double kArmMotorI = 0.0;
+        public static final double kArmMotorD = 0.0;
+        public static final double kArmPositionTolerance = 1.0; 
+
+        public static final double kClampIntakeVelocity = -0.5;
+        public static final double kClampShootVelocity = 0.75;
+        public static final double kClampShootDuration = 0.5;
+
+        public static final double kClampVelocityDeadzone = 1.0;
 
         public static final double kElevatorMotorStallCurrent = 0.0; // TODO: add
         public static final double kElevatorMotorAutoSpeed = 0.75;
 
-        public static final double kElevatorIntakePosition = 135.0; // TODO: CHECCCCCKK
-        public static final double kElevatorLowNodePosition = 110.0;
-        public static final double kElevatorMidConePosition = 30.0;
+        public static final double kElevatorIntakePosition = 0.0; 
+        public static final double kElevatorLowNodePosition = 0.0;
+        public static final double kElevatorMidCubePosistion = 0.0;
+        public static final double kElevatorMidConePosition = 0.0;
+        public static final double kElevatorGrabPosition = 0.0;
         public static final double kElevatorHighPosition = 0.0;
 
         public static final double kElevatorMotorP = 0.0;
         public static final double kElevatorMotorI = 0.0;
         public static final double kElevatorMotorD = 0.0;
+        public static final double kElevatorPositionTolerance = 1.0;
 
-        public static final double kClampMotorAutoSpeed = 0.5;
+        public static final double kPlaceCommandWaitTime = 2.0;
     }
 
     public static final class VisionConstants {

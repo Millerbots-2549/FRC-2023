@@ -5,18 +5,22 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.ClampSubsystem;
 import static frc.robot.Constants.ManipulatorConstants.*;
-import frc.robot.subsystems.ElevatorSubsystem;
 
-public class BringElevatorUp extends CommandBase {
-  private final ElevatorSubsystem m_elevatorSubsystem;
+import java.util.function.BooleanSupplier;
 
-  /** Creates a new BringElevatorUp. */
-  public BringElevatorUp(ElevatorSubsystem subsystem) {
-    m_elevatorSubsystem = subsystem;
+public class ClampIntake extends CommandBase {
+  private final ClampSubsystem m_clampSubsystem;
+  private final BooleanSupplier m_changeModeSupplier;
+
+  /** Creates a new ClampIntake. */
+  public ClampIntake(ClampSubsystem clamp, BooleanSupplier changeMode) {
+    m_clampSubsystem = clamp;
+    m_changeModeSupplier = changeMode;
 
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
+    addRequirements(clamp);
   }
 
   // Called when the command is initially scheduled.
@@ -26,19 +30,20 @@ public class BringElevatorUp extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevatorSubsystem.setElevatorMotorSpeed(-kElevatorMotorAutoSpeed);
+    m_clampSubsystem.setClampMotorSpeeds(kClampIntakeVelocity, kClampIntakeVelocity);
+    if(m_changeModeSupplier.getAsBoolean()) 
+      m_clampSubsystem.toggleSolenoid();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_elevatorSubsystem.setElevatorMotorSpeed(0);
-    m_elevatorSubsystem.resetEncoder();
+    m_clampSubsystem.setClampMotorSpeeds(0, 0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(m_elevatorSubsystem.getElevatorMotorCurrent()) > kElevatorMotorStallCurrent;
+    return false;
   }
 }

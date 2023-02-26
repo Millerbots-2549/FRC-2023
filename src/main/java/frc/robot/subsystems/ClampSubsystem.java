@@ -6,22 +6,28 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.ManipulatorConstants.*;
+
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class ClampSubsystem extends SubsystemBase {
 
   private final Solenoid m_clampSolenoid;
-  private final PWMSparkMax m_leftClampMotor;
-  private final PWMSparkMax m_rightClampMotor;
+  private final CANSparkMax m_leftClampMotor;
+  private final CANSparkMax m_rightClampMotor;
+  private final RelativeEncoder m_leftEncoder;
+  private final RelativeEncoder m_rightEncoder;
 
   /** Creates a new ClampSubsystem. */
   public ClampSubsystem() {
-
     m_clampSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, kClampSolenoidPort);
-    m_leftClampMotor = new PWMSparkMax(kLeftClampMotorPort);
-    m_rightClampMotor = new PWMSparkMax(kRightClampMotorPort);
+    m_leftClampMotor = new CANSparkMax(kLeftClampMotorPort, MotorType.kBrushless);
+    m_rightClampMotor = new CANSparkMax(kRightClampMotorPort, MotorType.kBrushless);
+    m_leftEncoder = m_leftClampMotor.getEncoder();
+    m_rightEncoder = m_rightClampMotor.getEncoder();
 
     m_rightClampMotor.setInverted(true);
   }
@@ -44,5 +50,9 @@ public class ClampSubsystem extends SubsystemBase {
   public void setClampMotorSpeeds(double left, double right) {
     m_leftClampMotor.set(left);
     m_rightClampMotor.set(right);
+  }
+
+  public double getAverageMotorSpeeds() {
+    return (m_leftEncoder.getVelocity() + m_rightEncoder.getVelocity()) / 2;
   }
 }
