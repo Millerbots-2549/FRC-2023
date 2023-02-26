@@ -14,12 +14,14 @@ public class TeleopClamp extends CommandBase {
   private final ClampSubsystem m_clampSubsystem;
   private final BooleanSupplier m_toggleSolenoidSupplier;
   private final DoubleSupplier m_clampMotorSpeeds;
+  private final BooleanSupplier m_clampMotorReverse;
 
   /** Creates a new TeleopClamp. */
-  public TeleopClamp(ClampSubsystem subsystem, BooleanSupplier toggleSolenoids, DoubleSupplier motorSpeeds) {
+  public TeleopClamp(ClampSubsystem subsystem, BooleanSupplier toggleSolenoids, DoubleSupplier motorSpeeds, BooleanSupplier motorReverse) {
     m_clampSubsystem = subsystem;
     m_toggleSolenoidSupplier = toggleSolenoids;
     m_clampMotorSpeeds = motorSpeeds;
+    m_clampMotorReverse = motorReverse;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -32,7 +34,11 @@ public class TeleopClamp extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_clampSubsystem.setClampMotorSpeeds(m_clampMotorSpeeds.getAsDouble(), m_clampMotorSpeeds.getAsDouble());
+    double speed = m_clampMotorSpeeds.getAsDouble();
+    if(m_clampMotorReverse.getAsBoolean()){
+      speed *= -1;
+    }
+    m_clampSubsystem.setClampMotorSpeeds(speed, speed);
     if(m_toggleSolenoidSupplier.getAsBoolean()){
       m_clampSubsystem.toggleSolenoid();
     }

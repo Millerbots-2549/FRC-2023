@@ -71,6 +71,8 @@ public final class Constants {
         public static final double kElevatorMotorP = 0.0;
         public static final double kElevatorMotorI = 0.0;
         public static final double kElevatorMotorD = 0.0;
+
+        public static final double kClampMotorAutoSpeed = 0.5;
     }
 
     public static final class VisionConstants {
