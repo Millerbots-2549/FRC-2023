@@ -4,40 +4,37 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import static frc.robot.Constants.ManipulatorConstants.*;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import static frc.robot.Constants.ManipulatorConstants.*;
-
 public class ArmSubsystem extends SubsystemBase {
-  private final CANSparkMax m_armMotor;
-  private final RelativeEncoder m_armEncoder;
-
-  /** Creates a new ArmSubsystem. */
-  public ArmSubsystem() {
-    m_armMotor = new CANSparkMax(kArmMotorPort, MotorType.kBrushed);
-    m_armEncoder = m_armMotor.getEncoder();
-  }
+  private final CANSparkMax m_armMotor = new CANSparkMax(kArmMotorPort, MotorType.kBrushed);
+  private final RelativeEncoder m_armEncoder = m_armMotor.getEncoder();
+  private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kElevatorFeedforwardKS, kElevatorFeedforwardKG, kElevatorFeedforwardKV, kElevatorFeedforwardKA);
 
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+  public void periodic() {}
 
-  public void setArmMotorSpeed(double speed) {
+  public void setMotorSpeed(double speed) {
     m_armMotor.set(speed);
   }
 
-  public double getArmPosition() {
+  public void setMotorVolts(double volts, double velocity) {
+    double feedforward = m_feedforward.calculate(velocity);
+    m_armMotor.setVoltage(volts+feedforward);
+  }
+
+  public double getEncoderDistance() {
     return m_armEncoder.getPosition();
   }
 
-  public double getArmMotorCurrent() {
-    SmartDashboard.putNumber("arm current", m_armMotor.getOutputCurrent());
-    return m_armMotor.getOutputCurrent();
+  public double getEncoderVelocity() {
+    return m_armEncoder.getVelocity();
   }
 }

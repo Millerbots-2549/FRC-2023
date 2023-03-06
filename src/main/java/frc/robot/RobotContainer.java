@@ -23,17 +23,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import static frc.robot.Constants.DriveConstants.*;
 import static frc.robot.Constants.ManipulatorConstants.*;
-import frc.robot.commands.AutoPreload;
-import frc.robot.commands.BringArmIn;
-import frc.robot.commands.BringArmOut;
-import frc.robot.commands.TeleopArm;
 import frc.robot.commands.TeleopClamp;
-import frc.robot.commands.TeleopDrive;
-import frc.robot.commands.TeleopElevator;
 import frc.robot.commands.sequences.GrabFromHumanPlayer;
 import frc.robot.commands.sequences.Intake;
 import frc.robot.commands.sequences.PlaceHybridNode;
@@ -50,23 +45,22 @@ import frc.robot.subsystems.ElevatorSubsystem;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  // Initialize controllers
+  XboxController m_driverController = new XboxController(0);
+  XboxController m_manipulatorController = new XboxController(1);
+  
   // The robot's subsystems and commands are defined here...
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
   private final ClampSubsystem m_clampSubsystem = new ClampSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
 
-  // Initialize controllers
-  XboxController m_driverController = new XboxController(0);
-  XboxController m_manipulatorController = new XboxController(1);
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    m_driveSubsystem.setDefaultCommand(new TeleopDrive(m_driveSubsystem, m_driverController::getLeftY, m_driverController::getLeftX));
+    m_driveSubsystem.setDefaultCommand(new RunCommand(() -> m_driveSubsystem.arcadeDrive(m_driverController.getLeftY(), m_driverController.getLeftX()), m_driveSubsystem));
     m_clampSubsystem.setDefaultCommand(new TeleopClamp(m_clampSubsystem, m_manipulatorController::getLeftBumperPressed, m_manipulatorController::getLeftTriggerAxis, m_manipulatorController::getRightBumper));
-    m_armSubsystem.setDefaultCommand(new TeleopArm(m_armSubsystem, m_manipulatorController::getLeftY));
-    m_elevatorSubsystem.setDefaultCommand(new TeleopElevator(m_elevatorSubsystem, m_manipulatorController::getRightY));
-
+    m_armSubsystem.setDefaultCommand(new RunCommand(() -> m_armSubsystem.setMotorSpeed(m_manipulatorController.getRightY()), m_armSubsystem));
+    m_elevatorSubsystem.setDefaultCommand(new RunCommand(() -> m_elevatorSubsystem.setMotorSpeed(m_manipulatorController.getLeftY()), m_elevatorSubsystem));
     // Configure the button bindings
     configureBindings();
   }
@@ -112,6 +106,6 @@ public class RobotContainer {
     //Runs this command in autonomous
     //m_driveSubsystem.resetOdometry(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
     //return getRamseteCommand(TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)), List.of(new Translation2d(1, 1), new Translation2d(2, -1)), new Pose2d(3, 1, new Rotation2d(Math.PI/2)), m_driveSubsystem.getTrajectoryConfig())).andThen(() -> m_driveSubsystem.tankDriveVolts(0, 0));
-    return new AutoPreload(m_armSubsystem, m_clampSubsystem, m_elevatorSubsystem);
+    return new PlaceMidNode(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem);
   }
 }

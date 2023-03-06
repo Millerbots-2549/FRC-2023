@@ -4,12 +4,10 @@
 
 package frc.robot.commands.sequences;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.BringArmPID;
+import frc.robot.commands.BringArm;
 import frc.robot.commands.ClampShoot;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClampSubsystem;
@@ -24,15 +22,17 @@ public class PlaceHybridNode extends SequentialCommandGroup {
   public PlaceHybridNode(ArmSubsystem arm, ClampSubsystem clamp) {
     if(clamp.isClampInCubeMode())
       addCommands(
+        new BringArm(arm, kArmBumperPosistion),
         new ClampShoot(clamp).withTimeout(kClampShootDuration),
-        new WaitCommand(kPlaceCommandWaitTime)
+        new WaitCommand(kPlaceCommandWaitTime),
+        new BringArm(arm, kArmInsidePosition)
       );
     else
       addCommands(
-        new BringArmPID(arm, kArmIntakePosition),
+        new BringArm(arm, kArmIntakePosition),
         new InstantCommand(clamp::toggleSolenoid),
         new WaitCommand(kPlaceCommandWaitTime),
-        new BringArmPID(arm, kArmInsidePosition)
+        new BringArm(arm, kArmInsidePosition)
       ); 
   }
 }

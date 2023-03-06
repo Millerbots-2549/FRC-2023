@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.BringArmPID;
-import frc.robot.commands.BringElevatorPID;
+import frc.robot.commands.BringArm;
+import frc.robot.commands.BringElevator;
 import frc.robot.commands.ClampShoot;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClampSubsystem;
@@ -25,27 +25,27 @@ public class PlaceMidNode extends SequentialCommandGroup {
     if(clamp.isClampInCubeMode())
       addCommands(
         new ParallelCommandGroup(
-          new BringElevatorPID(elevator, kElevatorMidCubePosistion),
-          new BringArmPID(arm, kArmMidCubePosition)
+          new BringElevator(elevator, kElevatorMidCubePosistion),
+          new BringArm(arm, kArmMidCubePosition)
         ),
         new ClampShoot(clamp).withTimeout(kClampShootDuration),
         new WaitCommand(kPlaceCommandWaitTime),
         new ParallelCommandGroup(
-          new BringElevatorPID(elevator, kElevatorLowNodePosition),
-          new BringArmPID(arm, kArmInsidePosition)
+          new BringElevator(elevator, kElevatorLowNodePosition),
+          new BringArm(arm, kArmInsidePosition)
         )
       );
     else
       addCommands(
         new ParallelCommandGroup(
-          new BringElevatorPID(elevator, kElevatorMidConePosition),
-          new BringArmPID(arm, kArmMidConePosition)
+          new BringElevator(elevator, kElevatorMidConePosition),
+          new BringArm(arm, kArmMidConePosition)
         ),
         new InstantCommand(clamp::toggleSolenoid),
         new WaitCommand(kPlaceCommandWaitTime),
         new ParallelCommandGroup(
-          new BringElevatorPID(elevator, kElevatorLowNodePosition),
-          new BringArmPID(arm, kArmInsidePosition)
+          new BringElevator(elevator, kElevatorLowNodePosition),
+          new BringArm(arm, kArmInsidePosition)
         )
       );
   }

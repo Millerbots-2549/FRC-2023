@@ -4,45 +4,39 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import static frc.robot.Constants.ManipulatorConstants.*;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import static frc.robot.Constants.ManipulatorConstants.*;
-
 public class ElevatorSubsystem extends SubsystemBase {
-  private final CANSparkMax m_elevatorMotor;
-  private final RelativeEncoder m_elevatorEncoder;
-  
-  /** Creates a new ElevatorSubsystem. */
-  public ElevatorSubsystem() {
-    m_elevatorMotor = new CANSparkMax(kElevatorMotorPort, MotorType.kBrushless);
-    m_elevatorEncoder = m_elevatorMotor.getEncoder();
-  }
+  private final CANSparkMax m_elevatorMotor = 
+    new CANSparkMax(kElevatorMotorPort, MotorType.kBrushless);
+  private final RelativeEncoder m_elevatorEncoder = 
+    m_elevatorMotor.getEncoder();
+  private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kElevatorFeedforwardKS, kElevatorFeedforwardKG, kElevatorFeedforwardKV, kElevatorFeedforwardKA);
 
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+  public void periodic() {}
 
-  public void setElevatorMotorSpeed(double speed) {
+  public void setMotorSpeed(double speed) {
     m_elevatorMotor.set(speed);
-    SmartDashboard.putNumber("elevator encoder", m_elevatorMotor.getEncoder().getPosition());
-    SmartDashboard.putNumber("elevator current", m_elevatorMotor.getOutputCurrent());
   }
 
-  public double getElevatorMotorCurrent() {
-    return m_elevatorMotor.getOutputCurrent();
+  public void setMotorVolts(double volts, double velocity) {
+    double feedforward = m_feedforward.calculate(velocity);
+    m_elevatorMotor.setVoltage(volts+feedforward);
   }
 
-  public double getPosition() {
+  public double getEncoderDistance() {
     return m_elevatorEncoder.getPosition();
   }
 
-  public void resetEncoder() {
-    // Zeroes the encoder on the elevator motor
-    m_elevatorMotor.getEncoder().setPosition(0);
+  public double getEncoderVelocity() {
+    return m_elevatorEncoder.getVelocity();
   }
 }

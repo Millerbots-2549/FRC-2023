@@ -5,8 +5,8 @@
 package frc.robot.commands.sequences;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.BringArmPID;
-import frc.robot.commands.BringElevatorPID;
+import frc.robot.commands.BringArm;
+import frc.robot.commands.BringElevator;
 import frc.robot.commands.ClampIntake;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClampSubsystem;
@@ -24,11 +24,11 @@ public class Intake extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new BringArmPID(arm, kArmIntakePosition),
-      new BringElevatorPID(elevator, kElevatorIntakePosition),
+      new BringArm(arm, kArmIntakePosition),
+      new BringElevator(elevator, kElevatorIntakePosition),
       new ClampIntake(clamp, changeMode).until(() -> clamp.getAverageMotorSpeeds() < kClampVelocityDeadzone),
-      new BringElevatorPID(elevator, kElevatorLowNodePosition),
-      new BringArmPID(arm, kArmInsidePosition)
+      new BringElevator(elevator, kElevatorLowNodePosition),
+      new BringArm(arm, kArmInsidePosition)
     );
   }
 }
