@@ -51,30 +51,33 @@ public final class Constants {
     }
 
     public static final class ManipulatorConstants {
-        public static final int kArmMotorPort = 8;
-        public static final int kLeftClampMotorPort = 1;
-        public static final int kRightClampMotorPort = 2;
-        public static final int kElevatorMotorPort = 9;
+        public static final int kArmMotorPort = 7;
+        public static final int kLeftClampMotorPort = 6;
+        public static final int kRightClampMotorPort = 5;
+        public static final int kElevatorMotorPort = 8;
         public static final int kClampSolenoidPort = 0;
+
+        public static final int[] kArmEncoderPorts = {4, 5};
+        public static final double kArmEncoderDistancePerPulseMeters = 0.025 * Math.PI / 2048;
 
         public static final double kArmMotorStallCurrent = 16.0;
         public static final double kArmMotorAutoSpeed = 0.5;
         public static final double kArmMotorGrabSpeed = 0.2;
 
         public static final double kArmInsidePosition = 0.0;
-        public static final double kArmBumperPosistion = 0.0;
+        public static final double kArmBumperPosistion = -0.15;
         public static final double kArmIntakePosition = 0.0;
         public static final double kArmMidCubePosition = 0.0;
         public static final double kArmMidConePosition = 0.0;
 
-        public static final double kArmFeedforwardKS = 0.0;
-        public static final double kArmFeedforwardKG = 0.0;
-        public static final double kArmFeedforwardKV = 0.0;
-        public static final double kArmFeedforwardKA = 0.0;
-        public static final double kArmMotorKP = 0.0;
-        public static final double kArmMaxVelocity = 0.0;
-        public static final double kArmMaxAcceleration = 0.0;
-        public static final double kArmPositionTolerance = 1.0; 
+        public static final double kArmFeedforwardKS = 1.8541;
+        public static final double kArmFeedforwardKG = 1.5599;
+        public static final double kArmFeedforwardKV = 3.2778;
+        public static final double kArmFeedforwardKA = 0.73104;
+        public static final double kArmMotorKP = 1.0;
+        public static final double kArmMaxVelocity = 0.2;
+        public static final double kArmMaxAcceleration = 0.5;
+        public static final double kArmPositionTolerance = 0.01; 
 
         public static final double kClampIntakeVelocity = -0.5;
         public static final double kClampShootVelocity = 0.75;

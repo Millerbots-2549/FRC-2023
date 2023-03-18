@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.subsystems.ArmSubsystem;
 
@@ -33,6 +34,10 @@ public class BringArm extends ProfiledPIDCommand {
         // This uses the output
         (output, setpoint) -> {
           arm.setMotorVolts(output, setpoint.velocity);
+          SmartDashboard.putNumber("output volts", output);
+          SmartDashboard.putNumber("output velocity", setpoint.velocity);
+          SmartDashboard.putNumber("setpoint", kSetpoint);
+          SmartDashboard.putNumber("output position", setpoint.position);
         });
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -45,6 +50,6 @@ public class BringArm extends ProfiledPIDCommand {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_controller.atSetpoint();
+    return false;
   }
 }
