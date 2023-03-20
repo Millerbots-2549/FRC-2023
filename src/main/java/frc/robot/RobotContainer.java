@@ -76,8 +76,10 @@ public class RobotContainer {
     //new JoystickButton(m_manipulatorController, Button.kA.value).onTrue(new Intake(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController::getLeftBumperPressed));
     //new JoystickButton(m_manipulatorController, Button.kY.value).onTrue(new GrabFromHumanPlayer(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController::getBButtonPressed));
 
-    //new POVButton(m_manipulatorController, 0).onTrue(new PlaceHybridNode(m_armSubsystem, m_clampSubsystem));
-    //new POVButton(m_manipulatorController, 180).onTrue(new PlaceMidNode(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem));
+    new POVButton(m_manipulatorController, 0).onTrue(new BringArm(m_armSubsystem, 0.0));
+    new POVButton(m_manipulatorController, 90).onTrue(new BringArm(m_armSubsystem, 0.20));
+    new POVButton(m_manipulatorController, 270).onTrue(new BringArm(m_armSubsystem, 0.10));
+    new POVButton(m_manipulatorController, 180).onTrue(new BringArm(m_armSubsystem, 0.40));
   }
 
   // Generates Ramsete command, used for trajectories

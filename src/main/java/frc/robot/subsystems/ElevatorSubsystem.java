@@ -24,7 +24,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {}
 
   public void setMotorSpeed(double speed) {
-    m_elevatorMotor.set(speed);
+    double m_adjustedDeadzoneSpeed = 0.0;
+    if (Math.abs(speed) > 0.02)
+      m_adjustedDeadzoneSpeed = speed - (Math.signum(speed) * 0.02);
+    m_elevatorMotor.set(m_adjustedDeadzoneSpeed);
   }
 
   public void setMotorVolts(double volts, double velocity) {

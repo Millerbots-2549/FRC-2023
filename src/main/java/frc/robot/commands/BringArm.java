@@ -23,7 +23,7 @@ public class BringArm extends ProfiledPIDCommand {
         new ProfiledPIDController(
             // The PID gains
             kArmMotorKP,
-            0,
+            0.1,
             0,
             // The motion profile constraints
             new TrapezoidProfile.Constraints(kArmMaxVelocity, kArmMaxAcceleration)),

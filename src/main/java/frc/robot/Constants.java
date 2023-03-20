@@ -60,6 +60,8 @@ public final class Constants {
         public static final int[] kArmEncoderPorts = {4, 5};
         public static final double kArmEncoderDistancePerPulseMeters = 0.025 * Math.PI / 2048;
 
+        public static final double kArmJoystickDeadzone = 0.02;
+
         public static final double kArmMotorStallCurrent = 16.0;
         public static final double kArmMotorAutoSpeed = 0.5;
         public static final double kArmMotorGrabSpeed = 0.2;
@@ -70,11 +72,11 @@ public final class Constants {
         public static final double kArmMidCubePosition = 0.0;
         public static final double kArmMidConePosition = 0.0;
 
-        public static final double kArmFeedforwardKS = 1.8541;
+        public static final double kArmFeedforwardKS = 1.2541;
         public static final double kArmFeedforwardKG = 1.5599;
-        public static final double kArmFeedforwardKV = 3.2778;
-        public static final double kArmFeedforwardKA = 0.73104;
-        public static final double kArmMotorKP = 1.0;
+        public static final double kArmFeedforwardKV = 10.2778;
+        public static final double kArmFeedforwardKA = 1.1208;
+        public static final double kArmMotorKP = 13.9;
         public static final double kArmMaxVelocity = 0.2;
         public static final double kArmMaxAcceleration = 0.5;
         public static final double kArmPositionTolerance = 0.01; 
@@ -86,6 +88,8 @@ public final class Constants {
         public static final double kClampVelocityDeadzone = 1.0;
 
         public static final double kElevatorSprocketDiameterMeters = 0.0363728;
+
+        public static final double kElevatorJoystickDeadzone = 0.02;
 
         public static final double kElevatorMotorStallCurrent = 0.0; // TODO: add
         public static final double kElevatorMotorAutoSpeed = 0.75;
