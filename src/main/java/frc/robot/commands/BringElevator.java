@@ -45,6 +45,7 @@ public class BringElevator extends ProfiledPIDCommand {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_controller.atSetpoint();
+    return false;
+    //return m_controller.atSetpoint();
   }
 }

@@ -29,7 +29,7 @@ public class GrabFromHumanPlayer extends SequentialCommandGroup {
     addCommands(
       new ParallelCommandGroup(
         new BringArm(arm, kArmBumperPosistion),
-        new BringElevator(elevator, kElevatorGrabPosition)
+        new BringElevator(elevator, kElevatorHighPosition)
       ),
       new WaitUntilCommand(grabCondition),
       new ParallelCommandGroup(

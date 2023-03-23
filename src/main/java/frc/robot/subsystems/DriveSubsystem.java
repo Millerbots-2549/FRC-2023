@@ -5,25 +5,30 @@
 package frc.robot.subsystems;
 
 import java.util.Optional;
-
 import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.DriveConstants.*;
 import frc.robot.Constants.VisionConstants;
@@ -59,7 +64,7 @@ public class DriveSubsystem extends SubsystemBase {
       kRightEncoderReversed);
 
   // Gyrometer sensor
-  private final Gyro m_gyro = new ADXRS450_Gyro();
+  private final ADIS16448_IMU m_gyro = new ADIS16448_IMU(ADIS16448_IMU.IMUAxis.kZ, Port.kMXP, ADIS16448_IMU.CalibrationTime._1s); 
 
   // Object that converts between robot speeds and wheel speeds
   private final DifferentialDriveKinematics m_kinematics = 
@@ -68,8 +73,8 @@ public class DriveSubsystem extends SubsystemBase {
   // Object that estimates robot's pose with MATH (look it up if you're curious)
   private final DifferentialDrivePoseEstimator m_poseEstimator = 
     new DifferentialDrivePoseEstimator(
-      m_kinematics, 
-      m_gyro.getRotation2d(), 
+      m_kinematics,
+      new Rotation2d(Units.degreesToRadians(m_gyro.getGyroAngleZ())), 
       m_leftEncoder.getDistance(), 
       m_rightEncoder.getDistance(), 
       new Pose2d());
@@ -95,21 +100,45 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     // Update odometry constantly
     updateOdometry();
+    SmartDashboard.putNumber("x gyro", m_gyro.getGyroAngleX());
+    SmartDashboard.putNumber("y gyro", m_gyro.getGyroAngleY());
+    SmartDashboard.putNumber("z gyro", m_gyro.getGyroAngleZ());
+    SmartDashboard.putNumber("closest node x", getClosestNode().getX());
+    SmartDashboard.putNumber("closest node y", getClosestNode().getY());
   }
 
   public Pose2d getPose() {
     return m_poseEstimator.getEstimatedPosition(); //returns estimated pose (position) of robot
   }
 
-  public Pose2d getClosestNode() {
+  public Translation2d getClosestNode() {
+    Translation2d closestTag = new Translation2d();
     Translation2d closestNode = new Translation2d();
-    int closestDistanceMeters = 30;
+    double closestDistanceMeters = 30;
     for(int i = 0; i < 8; i++){
-      if(m_poseEstimator.getEstimatedPosition().getTranslation().getDistance(VisionConstants.AprilTagLocations[i].toTranslation2d()) < closestDistanceMeters)
-        closestNode = VisionConstants.AprilTagLocations[i].toTranslation2d();
+      if(getPose().getTranslation().getDistance(VisionConstants.AprilTagLocations[i].toTranslation2d()) < closestDistanceMeters){
+        closestTag = VisionConstants.AprilTagLocations[i].toTranslation2d();
+        closestDistanceMeters = getPose().getTranslation().getDistance(VisionConstants.AprilTagLocations[i].toTranslation2d());
+      }
     }
+    double xTag = closestTag.getX();
+    double yTag = closestTag.getY();
+    double xOffset = (closestTag.getX() < 7) ? 0.36195 : -0.36195;
+    double yOffset = 0.32305625;
+    Translation2d[] possibleNodes = {
+      new Translation2d(xTag+xOffset, yTag-yOffset),
+      new Translation2d(xTag+xOffset, yTag),
+      new Translation2d(xTag+xOffset, yTag+yOffset),
+    };
+    for(int i = 0; i < 3; i++){
+      if(getPose().getTranslation().getDistance(possibleNodes[i]) < closestDistanceMeters){
+        closestNode = possibleNodes[i];
+        closestDistanceMeters = getPose().getTranslation().getDistance(possibleNodes[i]);
+      }
+    }
+
     // TODO: add rest of this shiz
-    return new Pose2d();
+    return closestNode;
   }
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
@@ -117,7 +146,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void updateOdometry() {
-    m_poseEstimator.update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+    m_poseEstimator.update(new Rotation2d(Units.degreesToRadians(m_gyro.getGyroAngleZ())), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
 
     Optional<EstimatedRobotPose> result = visionContainer.getEstimatedRobotPose();
 
@@ -188,12 +217,12 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void resetOdometry(Pose2d pose){
     resetEncoders();
-    m_poseEstimator.resetPosition(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), pose);  
+    m_poseEstimator.resetPosition(new Rotation2d(Units.degreesToRadians(m_gyro.getGyroAngleZ())), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), pose);  
   }
 
   // Returns heading of robot, with range -180 to 180
   public double getHeading() {
-    return m_gyro.getRotation2d().getDegrees();
+    return m_gyro.getGyroAngleZ();
   }
 
   // Returns turn rate of robot, in degrees/sec
@@ -213,15 +242,46 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   // Creates config for robot trajectories
-  public TrajectoryConfig getTrajectoryConfig() {
-    return new TrajectoryConfig(
-      kMaxSpeedMetersPerSecond, 
-      kMaxAccelerationMetersPerSecondSquared)
-      .setKinematics(m_kinematics)
-      .addConstraint(getVoltageConstraint());
+  public TrajectoryConfig getTrajectoryConfig(double maxSpeed) {
+    if(maxSpeed != 0)
+      return new TrajectoryConfig(
+        maxSpeed, 
+        maxSpeed*2)
+        .setKinematics(m_kinematics)
+        .addConstraint(getVoltageConstraint());
+    else
+      return new TrajectoryConfig(
+        kMaxSpeedMetersPerSecond, 
+        kMaxAccelerationMetersPerSecondSquared)
+        .setKinematics(m_kinematics)
+        .addConstraint(getVoltageConstraint());
   }
   public DifferentialDriveKinematics getKinematics() {
     return m_kinematics;
   }
 
+  // Generates Ramsete command, used for trajectories
+
+  public RamseteCommand getRamseteCommand(Trajectory trajectory) {
+    return new RamseteCommand(
+      trajectory, 
+      () -> getPose(), 
+      new RamseteController(), 
+      new SimpleMotorFeedforward(
+        ksVolts, 
+        kvVoltSecondsPerMeter,
+        kaVoltSecondsSquaredPerMeter), 
+      m_kinematics, 
+      () -> getWheelSpeeds(), 
+      new PIDController(kPDriveVel, 0, 0), 
+      new PIDController(kPDriveVel, 0, 0), 
+      (a, b) -> tankDriveVolts(a, b),
+      this);
+  }
+
+  double[] a = {1, 5};
+
+  public double getRobotPitch() {
+    return m_gyro.getGyroAngleY();
+  }
 }

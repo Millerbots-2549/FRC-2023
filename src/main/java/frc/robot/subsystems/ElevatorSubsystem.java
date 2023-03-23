@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.ManipulatorConstants.*;
@@ -20,19 +21,32 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevatorMotor.getEncoder();
   private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kElevatorFeedforwardKS, kElevatorFeedforwardKG, kElevatorFeedforwardKV, kElevatorFeedforwardKA);
 
+  public ElevatorSubsystem() {
+    m_elevatorEncoder.setPositionConversionFactor(kElevatorDistancePerPulse);
+    m_elevatorMotor.setInverted(true);
+  }
+
   @Override
-  public void periodic() {}
+  public void periodic() {
+    SmartDashboard.putNumber("elevator encoder", m_elevatorEncoder.getPosition());
+  }
 
   public void setMotorSpeed(double speed) {
     double m_adjustedDeadzoneSpeed = 0.0;
-    if (Math.abs(speed) > 0.02)
-      m_adjustedDeadzoneSpeed = speed - (Math.signum(speed) * 0.02);
-    m_elevatorMotor.set(m_adjustedDeadzoneSpeed);
+    if (Math.abs(speed) > kElevatorJoystickDeadzone)
+      m_adjustedDeadzoneSpeed = speed - (Math.signum(speed) * kElevatorJoystickDeadzone);
+    //if (m_elevatorEncoder.getPosition() < -0.20 && m_adjustedDeadzoneSpeed < 0.0)
+    //  m_elevatorMotor.set(0.0);
+    //else
+      m_elevatorMotor.set(-m_adjustedDeadzoneSpeed);
   }
 
   public void setMotorVolts(double volts, double velocity) {
     double feedforward = m_feedforward.calculate(velocity);
-    m_elevatorMotor.setVoltage(volts+feedforward);
+    //if (m_elevatorEncoder.getPosition() < -0.20 && volts+feedforward < 0.0)
+    //  m_elevatorMotor.set(0.0);
+    //else
+      m_elevatorMotor.setVoltage(volts+feedforward);
   }
 
   public double getEncoderDistance() {
@@ -41,5 +55,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public double getEncoderVelocity() {
     return m_elevatorEncoder.getVelocity();
+  }
+
+  public void resetEncoder() {
+    m_elevatorEncoder.setPosition(0.0);
   }
 }

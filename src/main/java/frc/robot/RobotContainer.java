@@ -4,34 +4,24 @@
 
 package frc.robot;
 
-import java.util.List;
-import java.util.function.DoubleSupplier;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import static frc.robot.Constants.DriveConstants.*;
 import static frc.robot.Constants.ManipulatorConstants.*;
 
+import java.time.Instant;
+
 import frc.robot.commands.BringArm;
+import frc.robot.commands.BringElevator;
+import frc.robot.commands.DriveStraight;
 import frc.robot.commands.TeleopClamp;
-import frc.robot.commands.sequences.GrabFromHumanPlayer;
+import frc.robot.commands.sequences.BalanceOnChargeStation;
 import frc.robot.commands.sequences.Intake;
 import frc.robot.commands.sequences.PlaceHybridNode;
 import frc.robot.commands.sequences.PlaceMidNode;
@@ -76,30 +66,24 @@ public class RobotContainer {
     //new JoystickButton(m_manipulatorController, Button.kA.value).onTrue(new Intake(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController::getLeftBumperPressed));
     //new JoystickButton(m_manipulatorController, Button.kY.value).onTrue(new GrabFromHumanPlayer(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController::getBButtonPressed));
 
-    new POVButton(m_manipulatorController, 0).onTrue(new BringArm(m_armSubsystem, 0.0));
-    new POVButton(m_manipulatorController, 90).onTrue(new BringArm(m_armSubsystem, 0.20));
-    new POVButton(m_manipulatorController, 270).onTrue(new BringArm(m_armSubsystem, 0.10));
-    new POVButton(m_manipulatorController, 180).onTrue(new BringArm(m_armSubsystem, 0.40));
+    new JoystickButton(m_driverController, Button.kA.value).onTrue(new BalanceOnChargeStation(m_driveSubsystem));
+    new JoystickButton(m_driverController, Button.kY.value).onTrue(new DriveStraight(0, false, m_driveSubsystem).withTimeout(1.0));
+
+    new JoystickButton(m_driverController, Button.kB.value).onTrue(new InstantCommand(() -> m_driveSubsystem.tankDrive(0.0, 0.0)));
+
+    new JoystickButton(m_manipulatorController, Button.kY.value).onTrue(new Intake(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController::getAButtonPressed));
+    new JoystickButton(m_manipulatorController, Button.kX.value).onTrue(new PlaceHybridNode(m_armSubsystem, m_clampSubsystem));
+    //new JoystickButton(m_manipulatorController, Button.kB.value).onTrue(new PlaceMidNode(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem));
+
+    new JoystickButton(m_manipulatorController, Button.kB.value).onTrue(new InstantCommand(() -> {m_elevatorSubsystem.setMotorSpeed(0.0); m_clampSubsystem.setClampMotorSpeeds(0.0, 0.0); m_armSubsystem.setMotorSpeed(0.0);}, m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem));
+    new JoystickButton(m_manipulatorController, Button.kLeftBumper.value).onTrue(new InstantCommand(() -> m_elevatorSubsystem.resetEncoder()).andThen(new InstantCommand(() -> m_armSubsystem.resetEncoder())));
+
+    new POVButton(m_manipulatorController, 0).onTrue(new BringElevator(m_elevatorSubsystem, 0.0));
+    new POVButton(m_manipulatorController, 90).onTrue(new BringElevator(m_elevatorSubsystem, 0.40));
+    new POVButton(m_manipulatorController, 180).onTrue(new BringElevator(m_elevatorSubsystem, 0.80));
   }
 
-  // Generates Ramsete command, used for trajectories
-
-  public RamseteCommand getRamseteCommand(Trajectory trajectory) {
-    return new RamseteCommand(
-      trajectory, 
-      m_driveSubsystem::getPose, 
-      new RamseteController(), 
-      new SimpleMotorFeedforward(
-        ksVolts, 
-        kvVoltSecondsPerMeter,
-        kaVoltSecondsSquaredPerMeter), 
-      m_driveSubsystem.getKinematics(), 
-      m_driveSubsystem::getWheelSpeeds, 
-      new PIDController(kPDriveVel, 0, 0), 
-      new PIDController(kPDriveVel, 0, 0), 
-      m_driveSubsystem::tankDriveVolts, 
-      m_driveSubsystem);
-  }
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

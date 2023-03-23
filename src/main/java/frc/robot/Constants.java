@@ -31,8 +31,8 @@ public final class Constants {
         public static final int kRightMotor1Port = 3;
         public static final int kRightMotor2Port = 4;
 
-        public static final int[] kLeftEncoderPorts = {0, 1};
-        public static final int[] kRightEncoderPorts = {2, 3};
+        public static final int[] kLeftEncoderPorts = {2, 3};
+        public static final int[] kRightEncoderPorts = {0, 1};
         public static final boolean kLeftEncoderReversed = true;
         public static final boolean kRightEncoderReversed = false;
 
@@ -43,8 +43,12 @@ public final class Constants {
         public static final double kvVoltSecondsPerMeter = 3.203818;
         public static final double kaVoltSecondsSquaredPerMeter = 0.7168503;
 
-        public static final double kMaxSpeedMetersPerSecond = 4; 
-        public static final double kMaxAccelerationMetersPerSecondSquared = 1;
+        public static final double kMaxSpeedMetersPerSecond = 1.5; 
+        public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+
+        public static final double kBalanceAirPitch = 10.0; // TODO: test
+        public static final double kBalanceDropPitch = 5.0;
+        public static final double kBalanceSpeedMetersPerSecond = 0.1;
 
         public static final double kTrackWidthMeters = Units.inchesToMeters(21.5);
         public static double kMaxJoystickAcceleration;
@@ -55,67 +59,66 @@ public final class Constants {
         public static final int kLeftClampMotorPort = 6;
         public static final int kRightClampMotorPort = 5;
         public static final int kElevatorMotorPort = 8;
-        public static final int kClampSolenoidPort = 0;
+        public static final int kClampSolenoidPort = 1;
 
         public static final int[] kArmEncoderPorts = {4, 5};
         public static final double kArmEncoderDistancePerPulseMeters = 0.025 * Math.PI / 2048;
 
-        public static final double kArmJoystickDeadzone = 0.02;
+        public static final double kArmJoystickDeadzone = 0.05;
 
         public static final double kArmMotorStallCurrent = 16.0;
         public static final double kArmMotorAutoSpeed = 0.5;
         public static final double kArmMotorGrabSpeed = 0.2;
 
         public static final double kArmInsidePosition = 0.0;
-        public static final double kArmBumperPosistion = -0.15;
-        public static final double kArmIntakePosition = 0.0;
-        public static final double kArmMidCubePosition = 0.0;
-        public static final double kArmMidConePosition = 0.0;
+        public static final double kArmBumperPosistion = -0.05;
+        public static final double kArmIntakePosition = -0.30;
+        public static final double kArmMidCubePosition = -0.30;
+        public static final double kArmMidConePosition = -0.40;
 
         public static final double kArmFeedforwardKS = 1.2541;
         public static final double kArmFeedforwardKG = 1.5599;
         public static final double kArmFeedforwardKV = 10.2778;
         public static final double kArmFeedforwardKA = 1.1208;
-        public static final double kArmMotorKP = 13.9;
-        public static final double kArmMaxVelocity = 0.2;
+        public static final double kArmMotorKP = 19.9;
+        public static final double kArmMaxVelocity = 0.3;
         public static final double kArmMaxAcceleration = 0.5;
         public static final double kArmPositionTolerance = 0.01; 
 
-        public static final double kClampIntakeVelocity = -0.5;
+        public static final double kClampIntakeVelocity = 0.5;
         public static final double kClampShootVelocity = 0.75;
         public static final double kClampShootDuration = 0.5;
 
         public static final double kClampVelocityDeadzone = 1.0;
 
         public static final double kElevatorSprocketDiameterMeters = 0.0363728;
+        public static final double kElevatorDistancePerPulse = Units.inchesToMeters(1.432*Math.PI/36);
 
-        public static final double kElevatorJoystickDeadzone = 0.02;
+        public static final double kElevatorJoystickDeadzone = 0.05;
 
         public static final double kElevatorMotorStallCurrent = 0.0; // TODO: add
         public static final double kElevatorMotorAutoSpeed = 0.75;
 
-        public static final double kElevatorIntakePosition = 0.0; 
+        public static final double kElevatorIntakePosition = -0.2; 
         public static final double kElevatorLowNodePosition = 0.0;
-        public static final double kElevatorMidCubePosistion = 0.0;
-        public static final double kElevatorMidConePosition = 0.0;
-        public static final double kElevatorGrabPosition = 0.0;
-        public static final double kElevatorHighPosition = 0.0;
+        public static final double kElevatorMidCubePosistion = 0.5;
+        public static final double kElevatorHighPosition = 0.84;
 
-        public static final double kElevatorFeedforwardKS = 0.0;
-        public static final double kElevatorFeedforwardKG = 0.0;
-        public static final double kElevatorFeedforwardKV = 0.0;
-        public static final double kElevatorFeedforwardKA = 0.0;
-        public static final double kElevatorMotorKP = 0.0;
-        public static final double kElevatorMaxVelocity = 0.0;
-        public static final double kElevatorMaxAcceleration = 0.0;
-        public static final double kElevatorPositionTolerance = 0.0;
+        public static final double kElevatorFeedforwardKS = 0.1389;
+        public static final double kElevatorFeedforwardKG = 0.14061;
+        public static final double kElevatorFeedforwardKV = 39.188;
+        public static final double kElevatorFeedforwardKA = 0.58921;
+        public static final double kElevatorMotorKP = 3.0;
+        public static final double kElevatorMaxVelocity = 0.25;
+        public static final double kElevatorMaxAcceleration = 0.5;
+        public static final double kElevatorPositionTolerance = 0.01;
 
         public static final double kPlaceCommandWaitTime = 2.0;
     }
 
     public static final class VisionConstants {
         public static final String kCameraName = "OV5647";
-        public static final Transform3d kRobotToCamTransform = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)); // TODO: add
+        public static final Transform3d kRobotToCamTransform = new Transform3d(new Translation3d(0, 0, 1.3255625), new Rotation3d(0, -15.0, 0)); // TODO: add
 
         // Defining objects representing AprilTags on the field
         public static final Translation3d[] AprilTagLocations = {

@@ -38,7 +38,7 @@ public class PlaceMidNode extends SequentialCommandGroup {
     else
       addCommands(
         new ParallelCommandGroup(
-          new BringElevator(elevator, kElevatorMidConePosition),
+          new BringElevator(elevator, kElevatorHighPosition),
           new BringArm(arm, kArmMidConePosition)
         ),
         new InstantCommand(clamp::toggleSolenoid),

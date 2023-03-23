@@ -34,12 +34,19 @@ public class ArmSubsystem extends SubsystemBase {
     double m_adjustedDeadzoneSpeed = 0.0;
     if (Math.abs(speed) > 0.02)
       m_adjustedDeadzoneSpeed = speed - (Math.signum(speed) * 0.02);
-    m_armMotor.set(m_adjustedDeadzoneSpeed);
+    //if(m_armEncoder.getDistance() > 0.0 && m_adjustedDeadzoneSpeed > 0.0)
+    //  m_armMotor.set(0.0);
+    //else
+      m_armMotor.set(m_adjustedDeadzoneSpeed);
   }
 
   public void setMotorVolts(double volts, double velocity) {
     double feedforward = m_feedforward.calculate(velocity);
-    m_armMotor.setVoltage(volts+feedforward);
+    //if(m_armEncoder.getDistance() > 0.0 && volts+feedforward > 0.0)
+    //  m_armMotor.set(0);
+    //else
+      m_armMotor.setVoltage(volts+feedforward);
+    
     SmartDashboard.putNumber("arm rate", m_armEncoder.getRate());
     SmartDashboard.putNumber("arm volts", volts);
     SmartDashboard.putNumber("arm velocity", velocity);
@@ -53,4 +60,8 @@ public class ArmSubsystem extends SubsystemBase {
   //public double getEncoderVelocity() {
   //  return m_armEncoder.getVelocity();
   //}
+
+  public void resetEncoder() {
+    m_armEncoder.reset();
+  }
 }
