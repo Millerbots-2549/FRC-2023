@@ -72,7 +72,7 @@ public final class Constants {
 
         public static final double kArmInsidePosition = 0.0;
         public static final double kArmBumperPosistion = -0.05;
-        public static final double kArmIntakePosition = -0.30;
+        public static final double kArmIntakePosition = -0.35;
         public static final double kArmMidCubePosition = -0.30;
         public static final double kArmMidConePosition = -0.40;
 
@@ -80,10 +80,10 @@ public final class Constants {
         public static final double kArmFeedforwardKG = 1.5599;
         public static final double kArmFeedforwardKV = 10.2778;
         public static final double kArmFeedforwardKA = 1.1208;
-        public static final double kArmMotorKP = 19.9;
+        public static final double kArmMotorKP = 25.9;
         public static final double kArmMaxVelocity = 0.3;
         public static final double kArmMaxAcceleration = 0.5;
-        public static final double kArmPositionTolerance = 0.01; 
+        public static final double kArmPositionTolerance = 0.03; 
 
         public static final double kClampIntakeJoystickDeadzone = 0.07;
 
@@ -105,7 +105,7 @@ public final class Constants {
         public static final double kElevatorMotorStallCurrent = 0.0; // TODO: add
         public static final double kElevatorMotorAutoSpeed = 0.75;
 
-        public static final double kElevatorIntakePosition = -0.2; 
+        public static final double kElevatorIntakePosition = -0.15; 
         public static final double kElevatorLowNodePosition = 0.0;
         public static final double kElevatorMidCubePosistion = 0.5;
         public static final double kElevatorHighPosition = 0.84;

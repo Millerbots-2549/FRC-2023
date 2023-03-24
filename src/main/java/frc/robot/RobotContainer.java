@@ -69,7 +69,7 @@ public class RobotContainer {
 
     new JoystickButton(m_manipulatorController, Button.kY.value).onTrue(new Intake(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController::getAButtonPressed));
     new JoystickButton(m_manipulatorController, Button.kX.value).onTrue(new RunCommand(() -> {
-        m_clampSubsystem.setClampMotorSpeeds((m_manipulatorController.getLeftTriggerAxis() > kClampIntakeJoystickDeadzone ? m_manipulatorController.getLeftTriggerAxis() * (m_manipulatorController.getRightBumper() ? 1 : -1) : kClampHoldVelocity), (m_manipulatorController.getLeftTriggerAxis() > 0.07 ? kClampIntakeCurrentLimit : kClampHoldCurrentLimit));
+        m_clampSubsystem.setClampMotorSpeeds((m_manipulatorController.getLeftTriggerAxis() > kClampIntakeJoystickDeadzone ? m_manipulatorController.getLeftTriggerAxis() * (m_manipulatorController.getRightBumper() ? -1 : 1) : kClampHoldVelocity), (m_manipulatorController.getLeftTriggerAxis() > 0.07 ? kClampIntakeCurrentLimit : kClampHoldCurrentLimit));
         if(m_manipulatorController.getAButtonPressed()) m_clampSubsystem.toggleSolenoid();
         m_armSubsystem.setMotorSpeed(m_manipulatorController.getRightY());
         m_elevatorSubsystem.setMotorSpeed(m_manipulatorController.getLeftY());

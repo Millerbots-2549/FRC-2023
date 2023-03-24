@@ -57,7 +57,7 @@ public class ClampSubsystem extends SubsystemBase {
     m_leftClampMotor.set(speed);
     m_leftClampMotor.setSmartCurrentLimit(amps);
     m_rightClampMotor.set(speed);
-    m_rightClampMotor.set(amps);
+    m_rightClampMotor.setSmartCurrentLimit(amps);
   }
 
   public double getAverageMotorSpeeds() {
