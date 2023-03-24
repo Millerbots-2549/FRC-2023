@@ -26,6 +26,7 @@ public class Intake extends SequentialCommandGroup {
     addCommands(
       new BringArm(arm, kArmIntakePosition),
       new BringElevator(elevator, kElevatorIntakePosition),
+      new ClampIntake(clamp, changeMode).withTimeout(0.5),
       new ClampIntake(clamp, changeMode).until(() -> clamp.getAverageMotorSpeeds() < kClampVelocityDeadzone),
       new BringElevator(elevator, kElevatorLowNodePosition),
       new BringArm(arm, kArmInsidePosition)

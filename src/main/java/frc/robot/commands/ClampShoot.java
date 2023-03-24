@@ -26,7 +26,7 @@ public class ClampShoot extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_clampSubsystem.setClampMotorSpeeds(kClampShootVelocity, kClampShootVelocity);
+    m_clampSubsystem.setClampMotorSpeeds(kClampShootVelocity, kClampIntakeCurrentLimit);
   }
 
   // Called once the command ends or is interrupted.

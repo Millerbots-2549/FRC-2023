@@ -53,9 +53,11 @@ public class ClampSubsystem extends SubsystemBase {
     return m_clampSolenoid.get();
   }
 
-  public void setClampMotorSpeeds(double left, double right) {
-    m_leftClampMotor.set(left);
-    m_rightClampMotor.set(right);
+  public void setClampMotorSpeeds(double speed, int amps) {
+    m_leftClampMotor.set(speed);
+    m_leftClampMotor.setSmartCurrentLimit(amps);
+    m_rightClampMotor.set(speed);
+    m_rightClampMotor.set(amps);
   }
 
   public double getAverageMotorSpeeds() {

@@ -5,12 +5,15 @@
 package frc.robot.commands.sequences;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.BringArm;
+import frc.robot.commands.BringElevator;
 import frc.robot.commands.ClampShoot;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClampSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 
 import static frc.robot.Constants.ManipulatorConstants.*;
 
@@ -19,17 +22,21 @@ import static frc.robot.Constants.ManipulatorConstants.*;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class PlaceHybridNode extends SequentialCommandGroup {
   /** Creates a new PlaceHybridNode. */
-  public PlaceHybridNode(ArmSubsystem arm, ClampSubsystem clamp) {
+  public PlaceHybridNode(ArmSubsystem arm, ClampSubsystem clamp, ElevatorSubsystem elevator) {
     if(clamp.isClampInCubeMode())
       addCommands(
-        new BringArm(arm, kArmBumperPosistion),
+        new ParallelCommandGroup(
+          new BringArm(arm, kArmBumperPosistion),
+          new BringElevator(elevator, kElevatorLowNodePosition)),
         new ClampShoot(clamp).withTimeout(kClampShootDuration),
         new WaitCommand(kPlaceCommandWaitTime),
         new BringArm(arm, kArmInsidePosition)
       );
     else
       addCommands(
-        new BringArm(arm, kArmIntakePosition),
+        new ParallelCommandGroup(
+          new BringArm(arm, kArmIntakePosition),
+          new BringElevator(elevator, kElevatorLowNodePosition)),
         new InstantCommand(clamp::toggleSolenoid),
         new WaitCommand(kPlaceCommandWaitTime),
         new BringArm(arm, kArmInsidePosition)

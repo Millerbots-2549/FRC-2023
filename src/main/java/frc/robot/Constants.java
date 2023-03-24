@@ -85,9 +85,15 @@ public final class Constants {
         public static final double kArmMaxAcceleration = 0.5;
         public static final double kArmPositionTolerance = 0.01; 
 
+        public static final double kClampIntakeJoystickDeadzone = 0.07;
+
         public static final double kClampIntakeVelocity = 0.5;
-        public static final double kClampShootVelocity = 0.75;
+        public static final int kClampIntakeCurrentLimit = 20;
+        public static final double kClampHoldVelocity = 0.07;
+        public static final int kClampHoldCurrentLimit = 5;
+        public static final double kClampShootVelocity = -0.75;
         public static final double kClampShootDuration = 0.5;
+        public static final double kClampMotorStartTime = 0.5;
 
         public static final double kClampVelocityDeadzone = 1.0;
 
@@ -113,7 +119,7 @@ public final class Constants {
         public static final double kElevatorMaxAcceleration = 0.5;
         public static final double kElevatorPositionTolerance = 0.01;
 
-        public static final double kPlaceCommandWaitTime = 2.0;
+        public static final double kPlaceCommandWaitTime = 0.5;
     }
 
     public static final class VisionConstants {

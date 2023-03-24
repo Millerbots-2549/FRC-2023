@@ -19,8 +19,8 @@ public class BalanceOnChargeStation extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new DriveStraight(0, true, subsystem).until(() -> subsystem.getRobotPitch() > DriveConstants.kBalanceAirPitch),
-      new DriveStraight(DriveConstants.kBalanceSpeedMetersPerSecond, isFinished(), subsystem).until(() -> subsystem.getRobotPitch() < DriveConstants.kBalanceDropPitch),
+      new DriveStraight(0, true, subsystem, subsystem.getHeading()).until(() -> subsystem.getRobotPitch() > DriveConstants.kBalanceAirPitch),
+      new DriveStraight(DriveConstants.kBalanceSpeedMetersPerSecond, isFinished(), subsystem, subsystem.getHeading()).until(() -> subsystem.getRobotPitch() < DriveConstants.kBalanceDropPitch),
       new InstantCommand(() -> subsystem.tankDriveVolts(0, 0))
     );
   }

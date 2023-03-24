@@ -8,6 +8,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ManipulatorConstants;
 import frc.robot.subsystems.ClampSubsystem;
 
 public class TeleopClamp extends CommandBase {
@@ -38,7 +39,7 @@ public class TeleopClamp extends CommandBase {
     if(m_clampMotorReverse.getAsBoolean()){
       speed *= -1;
     }
-    m_clampSubsystem.setClampMotorSpeeds(speed, speed);
+    m_clampSubsystem.setClampMotorSpeeds(speed, ManipulatorConstants.kClampIntakeCurrentLimit);
     if(m_toggleSolenoidSupplier.getAsBoolean()){
       m_clampSubsystem.toggleSolenoid();
     }
