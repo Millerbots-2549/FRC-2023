@@ -29,6 +29,11 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("elevator encoder", m_elevatorEncoder.getPosition());
+    if(m_elevatorEncoder.getPosition() > 0.80){
+      m_elevatorMotor.setSmartCurrentLimit(5);
+    }else{
+      m_elevatorMotor.setSmartCurrentLimit(20);
+    }
   }
 
   public void setMotorSpeed(double speed) {

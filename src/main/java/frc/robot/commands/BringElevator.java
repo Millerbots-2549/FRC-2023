@@ -49,7 +49,7 @@ public class BringElevator extends ProfiledPIDCommand {
   @Override
   public boolean isFinished() {
     if(kEnds){
-      return m_controller.atSetpoint();
+      return m_controller.atGoal();
     }else{
       return false;
     }

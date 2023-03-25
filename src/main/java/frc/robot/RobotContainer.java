@@ -81,7 +81,7 @@ public class RobotContainer {
         m_clampSubsystem.setClampMotorSpeeds(0.0, kClampIntakeCurrentLimit); 
         m_armSubsystem.setMotorSpeed(0.0);
       }, m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem));
-    new JoystickButton(m_manipulatorController, Button.kLeftBumper.value).onTrue(
+    new JoystickButton(m_manipulatorController, Button.kStart.value).onTrue(
       new InstantCommand(() -> m_elevatorSubsystem.resetEncoder()).andThen(
         new InstantCommand(() -> m_armSubsystem.resetEncoder())));
 
