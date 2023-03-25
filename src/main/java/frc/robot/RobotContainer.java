@@ -47,7 +47,7 @@ public class RobotContainer {
   public RobotContainer() {
     m_driveSubsystem.setDefaultCommand(new RunCommand(() -> m_driveSubsystem.arcadeDrive(-m_driverController.getLeftY(), -m_driverController.getLeftX()), m_driveSubsystem));
     m_clampSubsystem.setDefaultCommand(new RunCommand(() -> m_clampSubsystem.setClampMotorSpeeds(kClampHoldVelocity, kClampHoldCurrentLimit), m_clampSubsystem));
-    m_armSubsystem.setDefaultCommand(new BringArm(m_armSubsystem, (m_elevatorSubsystem.getEncoderDistance() > (kElevatorLowNodePosition - kElevatorPositionTolerance)) ? kArmInsidePosition : kArmIntakePosition));
+    m_armSubsystem.setDefaultCommand(new BringArm(m_armSubsystem, (m_elevatorSubsystem.getEncoderDistance() < (kElevatorLowNodePosition - kElevatorPositionTolerance)) ? kArmIntakePosition : kArmInsidePosition));
     m_elevatorSubsystem.setDefaultCommand(new BringElevator(m_elevatorSubsystem, kElevatorLowNodePosition));
     // Configure the button bindings
     configureBindings();

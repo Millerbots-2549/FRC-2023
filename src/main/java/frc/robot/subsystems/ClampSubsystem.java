@@ -37,6 +37,7 @@ public class ClampSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("clamp motor speeds", getAverageMotorSpeeds());
+    SmartDashboard.putBoolean("clamp solenoid", m_clampSolenoid.get());
   }
 
   public void toggleSolenoid() {

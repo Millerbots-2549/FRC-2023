@@ -22,7 +22,7 @@ import static frc.robot.Constants.ManipulatorConstants.*;
 public class PlaceMidNode extends SequentialCommandGroup {
   /** Creates a new PlaceMidNode. */
   public PlaceMidNode(ArmSubsystem arm, ElevatorSubsystem elevator, ClampSubsystem clamp) {
-    if(clamp.isClampInCubeMode())
+    if(clamp.isClampInCubeMode()){
       addCommands(
         new ParallelCommandGroup(
           new BringElevator(elevator, kElevatorMidCubePosistion),
@@ -35,7 +35,7 @@ public class PlaceMidNode extends SequentialCommandGroup {
           new BringArm(arm, kArmInsidePosition)
         )
       );
-    else
+    }else{
       addCommands(
         new ParallelCommandGroup(
           new BringElevator(elevator, kElevatorHighPosition),
@@ -49,5 +49,6 @@ public class PlaceMidNode extends SequentialCommandGroup {
         )
       );
       addRequirements(arm, elevator, clamp);
+    }
   }
 }
