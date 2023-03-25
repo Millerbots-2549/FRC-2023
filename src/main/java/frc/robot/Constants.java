@@ -81,8 +81,8 @@ public final class Constants {
         public static final double kArmFeedforwardKV = 10.2778;
         public static final double kArmFeedforwardKA = 1.1208;
         public static final double kArmMotorKP = 25.9;
-        public static final double kArmMaxVelocity = 0.3;
-        public static final double kArmMaxAcceleration = 0.5;
+        public static final double kArmMaxVelocity = 0.7;
+        public static final double kArmMaxAcceleration = 1.4;
         public static final double kArmPositionTolerance = 0.03; 
 
         public static final double kClampIntakeJoystickDeadzone = 0.07;
@@ -117,7 +117,7 @@ public final class Constants {
         public static final double kElevatorFeedforwardKA = 0.58921;
         public static final double kElevatorMotorKP = 10.0;
         public static final double kElevatorMaxVelocity = 0.25;
-        public static final double kElevatorMaxAcceleration = 0.5;
+        public static final double kElevatorMaxAcceleration = 1.0;
         public static final double kElevatorPositionTolerance = 0.01;
 
         public static final double kPlaceCommandWaitTime = 0.5;
