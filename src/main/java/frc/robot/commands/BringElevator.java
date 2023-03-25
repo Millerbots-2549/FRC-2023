@@ -15,8 +15,10 @@ import static frc.robot.Constants.ManipulatorConstants.*;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class BringElevator extends ProfiledPIDCommand {
+  private final boolean kEnds;
+
   /** Creates a new BringElevator. */
-  public BringElevator(ElevatorSubsystem elevator, double kSetpoint) {
+  public BringElevator(ElevatorSubsystem elevator, double kSetpoint, boolean ends) {
     super(
         // The ProfiledPIDController used by the command
         new ProfiledPIDController(
@@ -40,11 +42,16 @@ public class BringElevator extends ProfiledPIDCommand {
 
     // Configure additional PID options by calling `getController` here.
     getController().setTolerance(kElevatorPositionTolerance);
+    kEnds = ends;
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_controller.atGoal();
+    if(kEnds){
+      return m_controller.atSetpoint();
+    }else{
+      return false;
+    }
   }
 }

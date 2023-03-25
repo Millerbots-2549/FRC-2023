@@ -47,8 +47,8 @@ public class RobotContainer {
   public RobotContainer() {
     m_driveSubsystem.setDefaultCommand(new RunCommand(() -> m_driveSubsystem.arcadeDrive(-m_driverController.getLeftY(), -m_driverController.getLeftX()), m_driveSubsystem));
     m_clampSubsystem.setDefaultCommand(new RunCommand(() -> m_clampSubsystem.setClampMotorSpeeds(kClampHoldVelocity, kClampHoldCurrentLimit), m_clampSubsystem));
-    m_armSubsystem.setDefaultCommand(new BringArm(m_armSubsystem, (m_elevatorSubsystem.getEncoderDistance() < (kElevatorLowNodePosition - kElevatorPositionTolerance)) ? kArmIntakePosition : kArmInsidePosition));
-    m_elevatorSubsystem.setDefaultCommand(new BringElevator(m_elevatorSubsystem, kElevatorLowNodePosition));
+    m_armSubsystem.setDefaultCommand(new BringArm(m_armSubsystem, () -> (m_elevatorSubsystem.getEncoderDistance() > (kElevatorLowNodePosition - kElevatorPositionTolerance)) ? kArmInsidePosition : kArmIntakePosition, false));
+    m_elevatorSubsystem.setDefaultCommand(new BringElevator(m_elevatorSubsystem, kElevatorLowNodePosition, false));
     // Configure the button bindings
     configureBindings();
   }
@@ -67,7 +67,7 @@ public class RobotContainer {
 
     new JoystickButton(m_driverController, Button.kB.value).onTrue(new InstantCommand(() -> m_driveSubsystem.tankDrive(0.0, 0.0), m_driveSubsystem));
 
-    new JoystickButton(m_manipulatorController, Button.kY.value).onTrue(new Intake(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController::getAButtonPressed));
+    new JoystickButton(m_manipulatorController, Button.kY.value).onTrue(new Intake(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController));
     new JoystickButton(m_manipulatorController, Button.kX.value).onTrue(new RunCommand(() -> {
         m_clampSubsystem.setClampMotorSpeeds((m_manipulatorController.getLeftTriggerAxis() > kClampIntakeJoystickDeadzone ? m_manipulatorController.getLeftTriggerAxis() * (m_manipulatorController.getRightBumper() ? -1 : 1) : kClampHoldVelocity), (m_manipulatorController.getLeftTriggerAxis() > 0.07 ? kClampIntakeCurrentLimit : kClampHoldCurrentLimit));
         if(m_manipulatorController.getAButtonPressed()) m_clampSubsystem.toggleSolenoid();
@@ -100,6 +100,6 @@ public class RobotContainer {
     //Runs this command in autonomous
     //m_driveSubsystem.resetOdometry(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
     //return getRamseteCommand(TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)), List.of(new Translation2d(1, 1), new Translation2d(2, -1)), new Pose2d(3, 1, new Rotation2d(Math.PI/2)), m_driveSubsystem.getTrajectoryConfig())).andThen(() -> m_driveSubsystem.tankDriveVolts(0, 0));
-    return new BringArm(m_armSubsystem, kArmBumperPosistion);
+    return null;
   }
 }

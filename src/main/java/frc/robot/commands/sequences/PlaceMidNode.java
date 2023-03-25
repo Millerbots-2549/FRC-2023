@@ -22,33 +22,32 @@ import static frc.robot.Constants.ManipulatorConstants.*;
 public class PlaceMidNode extends SequentialCommandGroup {
   /** Creates a new PlaceMidNode. */
   public PlaceMidNode(ArmSubsystem arm, ElevatorSubsystem elevator, ClampSubsystem clamp) {
-    if(clamp.isClampInCubeMode()){
+    if(clamp.isClampInCubeMode())
       addCommands(
         new ParallelCommandGroup(
-          new BringElevator(elevator, kElevatorMidCubePosistion),
-          new BringArm(arm, kArmMidCubePosition)
+          new BringElevator(elevator, kElevatorMidCubePosistion, true),
+          new BringArm(arm, () -> kArmMidCubePosition, true)
         ),
         new ClampShoot(clamp).withTimeout(kClampShootDuration),
         new WaitCommand(kPlaceCommandWaitTime),
         new ParallelCommandGroup(
-          new BringElevator(elevator, kElevatorLowNodePosition),
-          new BringArm(arm, kArmInsidePosition)
+          new BringElevator(elevator, kElevatorLowNodePosition, true),
+          new BringArm(arm, () -> kArmInsidePosition, true)
         )
       );
-    }else{
+    else
       addCommands(
         new ParallelCommandGroup(
-          new BringElevator(elevator, kElevatorHighPosition),
-          new BringArm(arm, kArmMidConePosition)
+          new BringElevator(elevator, kElevatorHighPosition, true),
+          new BringArm(arm, () -> kArmMidConePosition, true)
         ),
         new InstantCommand(clamp::toggleSolenoid, clamp),
         new WaitCommand(kPlaceCommandWaitTime),
         new ParallelCommandGroup(
-          new BringElevator(elevator, kElevatorLowNodePosition),
-          new BringArm(arm, kArmInsidePosition)
+          new BringElevator(elevator, kElevatorLowNodePosition, true),
+          new BringArm(arm, () -> kArmInsidePosition, true)
         )
       );
       addRequirements(arm, elevator, clamp);
-    }
   }
 }

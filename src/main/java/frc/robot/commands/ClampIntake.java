@@ -4,20 +4,19 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ClampSubsystem;
 import static frc.robot.Constants.ManipulatorConstants.*;
 
-import java.util.function.BooleanSupplier;
-
 public class ClampIntake extends CommandBase {
   private final ClampSubsystem m_clampSubsystem;
-  private final BooleanSupplier m_changeModeSupplier;
+  private final XboxController m_controller;
 
   /** Creates a new ClampIntake. */
-  public ClampIntake(ClampSubsystem clamp, BooleanSupplier changeMode) {
+  public ClampIntake(ClampSubsystem clamp, XboxController controller) {
     m_clampSubsystem = clamp;
-    m_changeModeSupplier = changeMode;
+    m_controller = controller;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(clamp);
@@ -31,7 +30,7 @@ public class ClampIntake extends CommandBase {
   @Override
   public void execute() {
     m_clampSubsystem.setClampMotorSpeeds(kClampIntakeVelocity, kClampIntakeCurrentLimit);
-    if(m_changeModeSupplier.getAsBoolean()) 
+    if(m_controller.getAButtonPressed()) 
       m_clampSubsystem.toggleSolenoid();
   }
 

@@ -26,20 +26,20 @@ public class PlaceHybridNode extends SequentialCommandGroup {
     if(clamp.isClampInCubeMode())
       addCommands(
         new ParallelCommandGroup(
-          new BringArm(arm, kArmBumperPosistion),
-          new BringElevator(elevator, kElevatorLowNodePosition)),
+          new BringArm(arm, () -> kArmBumperPosistion, true),
+          new BringElevator(elevator, kElevatorLowNodePosition, true)),
         new ClampShoot(clamp).withTimeout(kClampShootDuration),
         new WaitCommand(kPlaceCommandWaitTime),
-        new BringArm(arm, kArmInsidePosition)
+        new BringArm(arm, () -> kArmInsidePosition, true)
       );
     else
       addCommands(
         new ParallelCommandGroup(
-          new BringArm(arm, kArmIntakePosition),
-          new BringElevator(elevator, kElevatorLowNodePosition)),
+          new BringArm(arm, () -> kArmIntakePosition, true),
+          new BringElevator(elevator, kElevatorLowNodePosition, true)),
         new InstantCommand(clamp::toggleSolenoid),
         new WaitCommand(kPlaceCommandWaitTime),
-        new BringArm(arm, kArmInsidePosition)
+        new BringArm(arm, () -> kArmInsidePosition, true)
       ); 
   }
 }
