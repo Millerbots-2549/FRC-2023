@@ -17,6 +17,7 @@ import static frc.robot.Constants.ManipulatorConstants.*;
 import frc.robot.commands.BringArm;
 import frc.robot.commands.BringElevator;
 import frc.robot.commands.DriveStraight;
+import frc.robot.commands.sequences.AutoSimpleMidCone;
 import frc.robot.commands.sequences.BalanceOnChargeStation;
 import frc.robot.commands.sequences.Intake;
 import frc.robot.commands.sequences.PlaceHybridNode;
@@ -100,6 +101,6 @@ public class RobotContainer {
     //Runs this command in autonomous
     //m_driveSubsystem.resetOdometry(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
     //return getRamseteCommand(TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)), List.of(new Translation2d(1, 1), new Translation2d(2, -1)), new Pose2d(3, 1, new Rotation2d(Math.PI/2)), m_driveSubsystem.getTrajectoryConfig())).andThen(() -> m_driveSubsystem.tankDriveVolts(0, 0));
-    return null;
+    return new AutoSimpleMidCone(m_armSubsystem, m_clampSubsystem, m_driveSubsystem, m_elevatorSubsystem);
   }
 }
