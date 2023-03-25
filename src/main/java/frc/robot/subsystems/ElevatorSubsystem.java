@@ -40,17 +40,17 @@ public class ElevatorSubsystem extends SubsystemBase {
     double m_adjustedDeadzoneSpeed = 0.0;
     if (Math.abs(speed) > kElevatorJoystickDeadzone)
       m_adjustedDeadzoneSpeed = speed - (Math.signum(speed) * kElevatorJoystickDeadzone);
-    //if (m_elevatorEncoder.getPosition() < -0.20 && m_adjustedDeadzoneSpeed < 0.0)
-    //  m_elevatorMotor.set(0.0);
-    //else
+    if (m_elevatorEncoder.getPosition() > kElevatorHighestPosition && -m_adjustedDeadzoneSpeed > 0)
+      m_elevatorMotor.set(0.0);
+    else
       m_elevatorMotor.set(-m_adjustedDeadzoneSpeed);
   }
 
   public void setMotorVolts(double volts, double velocity) {
     double feedforward = m_feedforward.calculate(velocity);
-    //if (m_elevatorEncoder.getPosition() < -0.20 && volts+feedforward < 0.0)
-    //  m_elevatorMotor.set(0.0);
-    //else
+    if (m_elevatorEncoder.getPosition() > kElevatorHighestPosition && volts+feedforward > 0.0)
+      m_elevatorMotor.set(0.0);
+    else
       m_elevatorMotor.setVoltage(volts+feedforward);
   }
 

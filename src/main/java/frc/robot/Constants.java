@@ -109,7 +109,7 @@ public final class Constants {
         public static final double kElevatorLowNodePosition = 0.0;
         public static final double kElevatorMidCubePosistion = 0.5;
         public static final double kElevatorHighPosition = 0.80;
-        public static final double kElevatorHighestPosition = 0.84;
+        public static final double kElevatorHighestPosition = 0.82;
 
         public static final double kElevatorFeedforwardKS = 0.1389;
         public static final double kElevatorFeedforwardKG = 0.14061;

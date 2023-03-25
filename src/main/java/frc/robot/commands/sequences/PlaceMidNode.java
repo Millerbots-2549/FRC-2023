@@ -37,16 +37,12 @@ public class PlaceMidNode extends SequentialCommandGroup {
       );
     else
       addCommands(
-        new ParallelCommandGroup(
-          new BringElevator(elevator, kElevatorHighPosition, true),
-          new BringArm(arm, () -> kArmMidConePosition, true)
-        ),
+        new BringElevator(elevator, kElevatorHighPosition, true),
+        new BringArm(arm, () -> kArmMidConePosition, true),
         new InstantCommand(clamp::toggleSolenoid, clamp),
         new WaitCommand(kPlaceCommandWaitTime),
-        new ParallelCommandGroup(
-          new BringElevator(elevator, kElevatorLowNodePosition, true),
-          new BringArm(arm, () -> kArmInsidePosition, true)
-        )
+        new BringArm(arm, () -> kArmInsidePosition, true),
+        new BringElevator(elevator, kElevatorLowNodePosition, true)
       );
       addRequirements(arm, elevator, clamp);
   }
