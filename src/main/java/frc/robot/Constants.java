@@ -49,6 +49,8 @@ public final class Constants {
         public static final double kBalanceAirPitch = 10.0; // TODO: test
         public static final double kBalanceDropPitch = 5.0;
         public static final double kBalanceSpeedMetersPerSecond = 0.1;
+        public static final double kBalanceWheelSpeedHigh = -0.8;
+        public static final double kBalanceWheelSpeedLow = -0.2;
 
         public static final double kTrackWidthMeters = Units.inchesToMeters(21.5);
         public static double kMaxJoystickAcceleration;
@@ -120,7 +122,7 @@ public final class Constants {
         public static final double kElevatorMaxAcceleration = 0.5;
         public static final double kElevatorPositionTolerance = 0.01;
 
-        public static final double kPlaceCommandWaitTime = 0.5;
+        public static final double kPlaceCommandWaitTime = 0.1;
     }
 
     public static final class VisionConstants {

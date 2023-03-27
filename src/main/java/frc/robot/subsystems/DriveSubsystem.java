@@ -24,7 +24,7 @@ import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstrai
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.SPI.Port;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -64,7 +64,7 @@ public class DriveSubsystem extends SubsystemBase {
       kRightEncoderReversed);
 
   // Gyrometer sensor
-  private final ADIS16448_IMU m_gyro = new ADIS16448_IMU(ADIS16448_IMU.IMUAxis.kZ, Port.kMXP, ADIS16448_IMU.CalibrationTime._1s); 
+  private final ADIS16448_IMU m_gyro = new ADIS16448_IMU(ADIS16448_IMU.IMUAxis.kZ, SPI.Port.kMXP, ADIS16448_IMU.CalibrationTime._1s); 
 
   // Object that converts between robot speeds and wheel speeds
   private final DifferentialDriveKinematics m_kinematics = 

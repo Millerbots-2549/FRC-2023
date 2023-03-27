@@ -4,24 +4,29 @@
 
 package frc.robot.commands.sequences;
 
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.BringArm;
+import frc.robot.commands.BringElevator;
+import frc.robot.commands.ClampShoot;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClampSubsystem;
-import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import static frc.robot.Constants.ManipulatorConstants.*;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AutoSimpleMidCone extends SequentialCommandGroup {
-  /** Creates a new AutoSimpleMidCone. */
-  public AutoSimpleMidCone(ArmSubsystem arm, ClampSubsystem clamp, DriveSubsystem drive, ElevatorSubsystem elevator) {
+public class PlaceCubeHigh extends SequentialCommandGroup {
+  /** Creates a new PlaceCubeHigh. */
+  public PlaceCubeHigh(ArmSubsystem arm, ClampSubsystem clamp, ElevatorSubsystem elevator) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new PlaceMidNode(arm, elevator, clamp, () -> true),
-      new RunCommand(() -> drive.tankDrive(-0.8, -0.8), drive).withTimeout(2.5)
+      new BringElevator(elevator, kElevatorHighPosition, true),
+      new BringArm(arm, () -> kArmMidConePosition, true),
+      new ClampShoot(clamp).withTimeout(kClampShootDuration),
+      new BringArm(arm, () -> kArmInsidePosition, false).until(() -> arm.getEncoderDistance() < kArmIntakePosition),
+      new BringElevator(elevator, kElevatorLowNodePosition, true)
     );
   }
 }

@@ -47,7 +47,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     m_driveSubsystem.setDefaultCommand(new RunCommand(() -> m_driveSubsystem.arcadeDrive(-m_driverController.getLeftY(), -m_driverController.getLeftX()), m_driveSubsystem));
-    m_clampSubsystem.setDefaultCommand(new RunCommand(() -> m_clampSubsystem.setClampMotorSpeeds(kClampHoldVelocity, kClampHoldCurrentLimit), m_clampSubsystem));
+    m_clampSubsystem.setDefaultCommand(new RunCommand(() -> m_clampSubsystem.setClampMotorSpeeds(kClampHoldVelocity, kClampHoldCurrentLimit), m_clampSubsystem).handleInterrupt(() -> m_manipulatorController.getAButtonPressed()));
     m_armSubsystem.setDefaultCommand(new BringArm(m_armSubsystem, () -> (m_elevatorSubsystem.getEncoderDistance() > (kElevatorLowNodePosition - kElevatorPositionTolerance)) ? kArmInsidePosition : kArmIntakePosition, false));
     m_elevatorSubsystem.setDefaultCommand(new BringElevator(m_elevatorSubsystem, kElevatorLowNodePosition, false));
     // Configure the button bindings
@@ -69,12 +69,13 @@ public class RobotContainer {
     new JoystickButton(m_driverController, Button.kB.value).onTrue(new InstantCommand(() -> m_driveSubsystem.tankDrive(0.0, 0.0), m_driveSubsystem));
 
     new JoystickButton(m_manipulatorController, Button.kY.value).onTrue(new Intake(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController));
-    new JoystickButton(m_manipulatorController, Button.kX.value).onTrue(new RunCommand(() -> {
+    new JoystickButton(m_manipulatorController, Button.kX.value).onTrue(new InstantCommand(() -> m_manipulatorController.getAButtonPressed()).andThen(
+      new RunCommand(() -> {
         m_clampSubsystem.setClampMotorSpeeds((m_manipulatorController.getLeftTriggerAxis() > kClampIntakeJoystickDeadzone ? m_manipulatorController.getLeftTriggerAxis() * (m_manipulatorController.getRightBumper() ? -1 : 1) : kClampHoldVelocity), (m_manipulatorController.getLeftTriggerAxis() > 0.07 ? kClampIntakeCurrentLimit : kClampHoldCurrentLimit));
         if(m_manipulatorController.getAButtonPressed()) m_clampSubsystem.toggleSolenoid();
         m_armSubsystem.setMotorSpeed(m_manipulatorController.getRightY());
         m_elevatorSubsystem.setMotorSpeed(m_manipulatorController.getLeftY());
-      }, m_clampSubsystem, m_armSubsystem, m_elevatorSubsystem));
+      }, m_clampSubsystem, m_armSubsystem, m_elevatorSubsystem)));
     //new JoystickButton(m_manipulatorController, Button.kB.value).onTrue(new PlaceMidNode(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem));
 
     new JoystickButton(m_manipulatorController, Button.kB.value).onTrue(new InstantCommand(() -> {
@@ -86,8 +87,8 @@ public class RobotContainer {
       new InstantCommand(() -> m_elevatorSubsystem.resetEncoder()).andThen(
         new InstantCommand(() -> m_armSubsystem.resetEncoder())));
 
-    new POVButton(m_manipulatorController, 0).onTrue(new PlaceHybridNode(m_armSubsystem, m_clampSubsystem, m_elevatorSubsystem));
-    new POVButton(m_manipulatorController, 90).onTrue(new PlaceMidNode(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem));
+    new POVButton(m_manipulatorController, 180).onTrue(new PlaceHybridNode(m_armSubsystem, m_clampSubsystem, m_elevatorSubsystem, m_manipulatorController::getAButton));
+    new POVButton(m_manipulatorController, 90).onTrue(new PlaceMidNode(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController::getAButton));
   }
 
   
