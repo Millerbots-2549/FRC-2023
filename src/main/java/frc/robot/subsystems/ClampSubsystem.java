@@ -50,6 +50,13 @@ public class ClampSubsystem extends SubsystemBase {
     }
   }
 
+  public boolean getSolenoidState() {
+    return m_clampSolenoid.get();
+  }
+  public boolean getSolenoidStateInverse() {
+    return !m_clampSolenoid.get();
+  }
+
   public boolean isClampInCubeMode() {
     return m_clampSolenoid.get();
   }

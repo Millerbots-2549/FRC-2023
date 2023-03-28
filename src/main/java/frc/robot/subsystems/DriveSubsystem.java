@@ -64,7 +64,7 @@ public class DriveSubsystem extends SubsystemBase {
       kRightEncoderReversed);
 
   // Gyrometer sensor
-  private final ADIS16448_IMU m_gyro = new ADIS16448_IMU(ADIS16448_IMU.IMUAxis.kZ, SPI.Port.kMXP, ADIS16448_IMU.CalibrationTime._16s); 
+  private final ADIS16448_IMU m_gyro = new ADIS16448_IMU(ADIS16448_IMU.IMUAxis.kZ, SPI.Port.kMXP, ADIS16448_IMU.CalibrationTime._32s); 
   
   // Object that converts between robot speeds and wheel speeds
   private final DifferentialDriveKinematics m_kinematics = 

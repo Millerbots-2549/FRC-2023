@@ -50,8 +50,8 @@ public final class Constants {
 
         public static final double kBalanceAirPitch = -14.0; // TODO: test
         public static final double kBalanceDropPitch = -10.0;
-        public static final double kBalanceWheelSpeedHigh = -0.75;
-        public static final double kBalanceWheelSpeedLow = -0.50;
+        public static final double kBalanceWheelSpeedHigh = -0.80;
+        public static final double kBalanceWheelSpeedLowVolts = -3.5;
 
         public static final double kTrackWidthMeters = 0.56394;
         public static double kMaxJoystickAcceleration;
