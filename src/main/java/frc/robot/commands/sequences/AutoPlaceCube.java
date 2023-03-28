@@ -4,9 +4,7 @@
 
 package frc.robot.commands.sequences;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.BringArm;
@@ -20,25 +18,20 @@ import static frc.robot.Constants.ManipulatorConstants.*;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class PlaceCubeHigh extends SequentialCommandGroup {
-  /** Creates a new PlaceCubeHigh. */
-  public PlaceCubeHigh(ArmSubsystem arm, ClampSubsystem clamp, ElevatorSubsystem elevator, XboxController controller) {
+public class AutoPlaceCube extends SequentialCommandGroup {
+  /** Creates a new AutoPlaceCube. */
+  public AutoPlaceCube(ArmSubsystem arm, ClampSubsystem clamp, ElevatorSubsystem elevator, double armPosition, double elevatorPosition) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new BringElevator(elevator, kElevatorHighPosition, true),
-      new BringArm(arm, () -> kArmMidConePosition, true),
       new ParallelRaceGroup(
-        new WaitUntilCommand(controller::getAButton),
-        new RunCommand(() -> {
-          arm.setMotorSpeed(controller.getRightY());
-          elevator.setMotorSpeed(controller.getLeftY());
-        }, arm, elevator)
+        new BringElevator(elevator, elevatorPosition, true),
+        new BringArm(arm, () -> armPosition, false)
       ),
       new ClampShoot(clamp).withTimeout(kClampShootDuration),
       new ParallelRaceGroup(
         new BringArm(arm, () -> kArmInsidePosition, false),
-        new WaitUntilCommand(() -> arm.getEncoderDistance() > kArmMidCubePosition).andThen(new BringElevator(elevator, kElevatorLowNodePosition, true)) 
+        new WaitUntilCommand(() -> arm.getEncoderDistance() > kArmMidCubePosition)).andThen(new BringElevator(elevator, kElevatorLowNodePosition, true)
       )
     );
   }

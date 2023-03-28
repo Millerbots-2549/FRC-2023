@@ -4,9 +4,13 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -14,12 +18,17 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import static frc.robot.Constants.ManipulatorConstants.*;
 
+import java.io.IOException;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.BringArm;
 import frc.robot.commands.BringElevator;
 import frc.robot.commands.DriveStraight;
-import frc.robot.commands.sequences.AutoSimpleMidCone;
+import frc.robot.commands.sequences.AutoHighCubeBalance;
+import frc.robot.commands.sequences.AutoPlaceCube;
 import frc.robot.commands.sequences.BalanceOnChargeStation;
+import frc.robot.commands.sequences.DebugDriveSpeedBalancing;
 import frc.robot.commands.sequences.Intake;
+import frc.robot.commands.sequences.PlaceCubeHigh;
 import frc.robot.commands.sequences.PlaceHybridNode;
 import frc.robot.commands.sequences.PlaceMidNode;
 import frc.robot.subsystems.ArmSubsystem;
@@ -44,6 +53,9 @@ public class RobotContainer {
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
 
+  // Chooser for autonomous commands
+  private final SendableChooser<Command> m_chooser = new SendableChooser<Command>();
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     m_driveSubsystem.setDefaultCommand(new RunCommand(() -> m_driveSubsystem.arcadeDrive(-m_driverController.getLeftY(), -m_driverController.getLeftX()), m_driveSubsystem));
@@ -52,6 +64,18 @@ public class RobotContainer {
     m_elevatorSubsystem.setDefaultCommand(new BringElevator(m_elevatorSubsystem, kElevatorLowNodePosition, false));
     // Configure the button bindings
     configureBindings();
+
+    //Creates options for the command chooser
+    m_chooser.addOption("Red/Blue Mid Cube Balance", new AutoHighCubeBalance(m_armSubsystem, m_clampSubsystem, m_elevatorSubsystem, m_driveSubsystem));
+    m_chooser.addOption("debug drivetrain", new DebugDriveSpeedBalancing(m_driveSubsystem));
+    for(int i = 0; i < 4; i++)
+      try{
+        Trajectory traj = TrajectoryUtil.fromPathweaverJson(DriveConstants.kAutoTrajectories[i]);
+        m_chooser.addOption(DriveConstants.kAutoNames[i], new AutoPlaceCube(m_armSubsystem, m_clampSubsystem, m_elevatorSubsystem, kArmMidConePosition, kElevatorHighPosition).andThen(
+          m_driveSubsystem.getRamseteCommand(traj.transformBy(new Transform2d(m_driveSubsystem.getPose(), traj.getInitialPose())))));
+      }catch (IOException e){
+        e.printStackTrace();
+      }
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -88,7 +112,8 @@ public class RobotContainer {
         new InstantCommand(() -> m_armSubsystem.resetEncoder())));
 
     new POVButton(m_manipulatorController, 180).onTrue(new PlaceHybridNode(m_armSubsystem, m_clampSubsystem, m_elevatorSubsystem, m_manipulatorController::getAButton));
-    new POVButton(m_manipulatorController, 90).onTrue(new PlaceMidNode(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController::getAButton));
+    new POVButton(m_manipulatorController, 90).onTrue(new PlaceMidNode(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController));
+    new POVButton(m_manipulatorController, 0).onTrue(new PlaceCubeHigh(m_armSubsystem, m_clampSubsystem, m_elevatorSubsystem, m_manipulatorController));
   }
 
   
@@ -99,9 +124,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    //Runs this command in autonomous
-    //m_driveSubsystem.resetOdometry(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
-    //return getRamseteCommand(TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)), List.of(new Translation2d(1, 1), new Translation2d(2, -1)), new Pose2d(3, 1, new Rotation2d(Math.PI/2)), m_driveSubsystem.getTrajectoryConfig())).andThen(() -> m_driveSubsystem.tankDriveVolts(0, 0));
-    return new AutoSimpleMidCone(m_armSubsystem, m_clampSubsystem, m_driveSubsystem, m_elevatorSubsystem);
+    return getAutonomousCommand();
   }
 }

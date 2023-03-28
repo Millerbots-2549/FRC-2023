@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import edu.wpi.first.apriltag.AprilTag;
@@ -14,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Filesystem;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -38,22 +40,34 @@ public final class Constants {
 
         public static final double kEncoderDistancePerPulse = (Units.inchesToMeters(6.0)*Math.PI)/360;
 
-        public static final double kPDriveVel = 0.093432;
-        public static final double ksVolts = 0.54397;
-        public static final double kvVoltSecondsPerMeter = 3.203818;
-        public static final double kaVoltSecondsSquaredPerMeter = 0.7168503;
+        public static final double kPDriveVel = 5.0952;
+        public static final double ksVolts = 1.0493;
+        public static final double kvVoltSecondsPerMeter = 3.2019;
+        public static final double kaVoltSecondsSquaredPerMeter = 0.96527;
 
-        public static final double kMaxSpeedMetersPerSecond = 1.5; 
-        public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+        public static final double kMaxSpeedMetersPerSecond = 0.75; 
+        public static final double kMaxAccelerationMetersPerSecondSquared = 1;
 
-        public static final double kBalanceAirPitch = 10.0; // TODO: test
-        public static final double kBalanceDropPitch = 5.0;
-        public static final double kBalanceSpeedMetersPerSecond = 0.1;
-        public static final double kBalanceWheelSpeedHigh = -0.8;
-        public static final double kBalanceWheelSpeedLow = -0.2;
+        public static final double kBalanceAirPitch = -14.0; // TODO: test
+        public static final double kBalanceDropPitch = -10.0;
+        public static final double kBalanceWheelSpeedHigh = -0.75;
+        public static final double kBalanceWheelSpeedLow = -0.50;
 
-        public static final double kTrackWidthMeters = Units.inchesToMeters(21.5);
+        public static final double kTrackWidthMeters = 0.56394;
         public static double kMaxJoystickAcceleration;
+
+        public static final Path[] kAutoTrajectories = {
+            Filesystem.getDeployDirectory().toPath().resolve("paths/AvoidBlueLeft.wpilib.json"),
+            Filesystem.getDeployDirectory().toPath().resolve("paths/AvoidBlueRight.wpilib.json"),
+            Filesystem.getDeployDirectory().toPath().resolve("paths/AvoidRedLeft.wpilib.json"),
+            Filesystem.getDeployDirectory().toPath().resolve("paths/AvoidRedRight.wpilib.json")
+        };
+        public static final String[] kAutoNames = {
+            "Blue Left Cube",
+            "Blue Right Cube",
+            "Red Left Cube",
+            "Red Right Cube"
+        };
     }
 
     public static final class ManipulatorConstants {

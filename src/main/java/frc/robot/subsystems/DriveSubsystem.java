@@ -64,8 +64,8 @@ public class DriveSubsystem extends SubsystemBase {
       kRightEncoderReversed);
 
   // Gyrometer sensor
-  private final ADIS16448_IMU m_gyro = new ADIS16448_IMU(ADIS16448_IMU.IMUAxis.kZ, SPI.Port.kMXP, ADIS16448_IMU.CalibrationTime._1s); 
-
+  private final ADIS16448_IMU m_gyro = new ADIS16448_IMU(ADIS16448_IMU.IMUAxis.kZ, SPI.Port.kMXP, ADIS16448_IMU.CalibrationTime._16s); 
+  
   // Object that converts between robot speeds and wheel speeds
   private final DifferentialDriveKinematics m_kinematics = 
     new DifferentialDriveKinematics(kTrackWidthMeters);
@@ -157,7 +157,7 @@ public class DriveSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("Vision Est. X Pos", camPose.estimatedPose.getX());
       SmartDashboard.putNumber("Vision Est. Y Pos", camPose.estimatedPose.getY());
       SmartDashboard.putNumber("Vision Est. Z Pos", camPose.estimatedPose.getZ());
-      SmartDashboard.putNumber("", camPose.estimatedPose.toPose2d().getRotation().getDegrees());
+      SmartDashboard.putNumber("Vision Est. Theta", camPose.estimatedPose.toPose2d().getRotation().getDegrees());
       SmartDashboard.putNumber("Vision Timestamp", camPose.timestampSeconds);
     }
 
@@ -283,5 +283,9 @@ public class DriveSubsystem extends SubsystemBase {
 
   public double getRobotPitch() {
     return m_gyro.getGyroAngleY();
+  }
+
+  public void resetGyro() {
+    m_gyro.reset();
   }
 }
