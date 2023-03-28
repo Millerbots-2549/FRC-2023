@@ -105,6 +105,8 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("z gyro", m_gyro.getGyroAngleZ());
     SmartDashboard.putNumber("closest node x", getClosestNode().getX());
     SmartDashboard.putNumber("closest node y", getClosestNode().getY());
+    SmartDashboard.putNumber("left wheel speed", getWheelSpeeds().leftMetersPerSecond);
+    SmartDashboard.putNumber("right wheel speed", getWheelSpeeds().rightMetersPerSecond);
   }
 
   public Pose2d getPose() {

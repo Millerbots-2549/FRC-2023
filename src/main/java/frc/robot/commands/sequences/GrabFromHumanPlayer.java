@@ -6,9 +6,9 @@ package frc.robot.commands.sequences;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.BringArm;
 import frc.robot.commands.BringElevator;
 import frc.robot.commands.ClampIntake;
@@ -26,17 +26,17 @@ public class GrabFromHumanPlayer extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ParallelCommandGroup(
-        new BringArm(arm, () -> kArmBumperPosistion, true),
-        new BringElevator(elevator, kElevatorHighPosition, true)
+      new ParallelRaceGroup(
+        new BringArm(arm, () -> kArmInsidePosition, false),
+        new BringElevator(elevator, () -> kElevatorHighPosition, true)
       ),
-      new WaitUntilCommand(controller::getAButtonPressed),
       new ParallelCommandGroup(
         new ClampIntake(clamp, controller),
-        new RunCommand(() -> arm.setMotorSpeed(kArmMotorGrabSpeed))
+        new RunCommand(() -> arm.setMotorSpeed(controller.getRightY()))
       ).until(() -> clamp.getAverageMotorSpeeds() < kClampVelocityDeadzone),
+      new BringElevator(elevator, () -> kElevatorHighestPosition, true),
       new BringArm(arm, () -> kArmInsidePosition, true),
-      new BringElevator(elevator, kElevatorLowNodePosition, true)
+      new BringElevator(elevator, () -> kElevatorLowNodePosition, true)
     );
   }
 }

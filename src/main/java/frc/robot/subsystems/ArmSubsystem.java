@@ -63,4 +63,8 @@ public class ArmSubsystem extends SubsystemBase {
   public void resetEncoder() {
     m_armEncoder.reset();
   }
+
+public Object setMotorSpeed(Object speed) {
+    return null;
+}
 }

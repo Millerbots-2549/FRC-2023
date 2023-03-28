@@ -11,6 +11,8 @@ import frc.robot.subsystems.ElevatorSubsystem;
 
 import static frc.robot.Constants.ManipulatorConstants.*;
 
+import java.util.function.DoubleSupplier;
+
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
@@ -18,7 +20,7 @@ public class BringElevator extends ProfiledPIDCommand {
   private final boolean kEnds;
 
   /** Creates a new BringElevator. */
-  public BringElevator(ElevatorSubsystem elevator, double kSetpoint, boolean ends) {
+  public BringElevator(ElevatorSubsystem elevator, DoubleSupplier kSetpoint, boolean ends) {
     super(
         // The ProfiledPIDController used by the command
         new ProfiledPIDController(
@@ -31,7 +33,7 @@ public class BringElevator extends ProfiledPIDCommand {
         // This should return the measurement
         elevator::getEncoderDistance,
         // This should return the goal (can also be a constant)
-        () -> kSetpoint,
+        () -> kSetpoint.getAsDouble(),
         // This uses the output
         (output, setpoint) -> {
           elevator.setMotorVolts(output, setpoint.velocity);

@@ -25,13 +25,13 @@ public class AutoPlaceCube extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new ParallelRaceGroup(
-        new BringElevator(elevator, elevatorPosition, true),
+        new BringElevator(elevator, () -> elevatorPosition, true),
         new BringArm(arm, () -> armPosition, false)
       ),
       new ClampShoot(clamp).withTimeout(kClampShootDuration),
       new ParallelRaceGroup(
         new BringArm(arm, () -> kArmInsidePosition, false),
-        new WaitUntilCommand(() -> arm.getEncoderDistance() > kArmMidCubePosition)).andThen(new BringElevator(elevator, kElevatorLowNodePosition, true)
+        new WaitUntilCommand(() -> arm.getEncoderDistance() > kArmMidCubePosition)).andThen(new BringElevator(elevator, () -> kElevatorLowNodePosition, true)
       )
     );
   }

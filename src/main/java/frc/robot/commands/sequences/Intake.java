@@ -24,10 +24,10 @@ public class Intake extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new BringArm(arm, () -> kArmIntakePosition, true),
-      new BringElevator(elevator, kElevatorIntakePosition, true),
+      new BringElevator(elevator, () -> kElevatorIntakePosition, true),
       new ClampIntake(clamp, controller).withTimeout(0.5),
       new ClampIntake(clamp, controller).until(() -> clamp.getAverageMotorSpeeds() < kClampVelocityDeadzone),
-      new BringElevator(elevator, kElevatorLowNodePosition, true),
+      new BringElevator(elevator, () -> kElevatorLowNodePosition, true),
       new BringArm(arm, () -> kArmInsidePosition, true)
     );
   }

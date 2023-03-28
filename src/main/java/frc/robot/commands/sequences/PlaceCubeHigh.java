@@ -26,7 +26,7 @@ public class PlaceCubeHigh extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new BringElevator(elevator, kElevatorHighPosition, true),
+      new BringElevator(elevator, () -> kElevatorHighPosition, true),
       new BringArm(arm, () -> kArmMidConePosition, true),
       new ParallelRaceGroup(
         new WaitUntilCommand(controller::getAButton),
@@ -38,7 +38,7 @@ public class PlaceCubeHigh extends SequentialCommandGroup {
       new ClampShoot(clamp).withTimeout(kClampShootDuration),
       new ParallelRaceGroup(
         new BringArm(arm, () -> kArmInsidePosition, false),
-        new WaitUntilCommand(() -> arm.getEncoderDistance() > kArmMidCubePosition).andThen(new BringElevator(elevator, kElevatorLowNodePosition, true)) 
+        new WaitUntilCommand(() -> arm.getEncoderDistance() > kArmMidCubePosition).andThen(new BringElevator(elevator, () -> kElevatorLowNodePosition, true)) 
       )
     );
   }

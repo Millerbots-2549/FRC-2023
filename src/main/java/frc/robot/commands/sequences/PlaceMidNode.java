@@ -29,7 +29,7 @@ public class PlaceMidNode extends SequentialCommandGroup {
     addCommands(
       new SequentialCommandGroup(
         new ParallelCommandGroup(
-          new BringElevator(elevator, kElevatorMidCubePosistion, true),
+          new BringElevator(elevator, () -> kElevatorMidCubePosistion, true),
           new WaitUntilCommand(() -> elevator.getEncoderDistance() > kElevatorMidCubePosistion).andThen(new BringArm(arm, () -> kArmMidCubePosition, true))
         ),
         new ParallelRaceGroup(
@@ -41,12 +41,12 @@ public class PlaceMidNode extends SequentialCommandGroup {
         ),
         new ClampShoot(clamp).withTimeout(kClampShootDuration),
         new ParallelCommandGroup(
-          new BringElevator(elevator, kElevatorLowNodePosition, true),
+          new BringElevator(elevator, () -> kElevatorLowNodePosition, true),
           new BringArm(arm, () -> kArmInsidePosition, true)
         )
       ).unless(clamp::getSolenoidState),
       new SequentialCommandGroup(
-        new BringElevator(elevator, kElevatorHighPosition, true),
+        new BringElevator(elevator, () -> kElevatorHighPosition, true),
         new BringArm(arm, () -> kArmMidConePosition, true),
         new ParallelRaceGroup(
           new WaitUntilCommand(controller::getAButton),
@@ -59,7 +59,7 @@ public class PlaceMidNode extends SequentialCommandGroup {
         new WaitCommand(kPlaceCommandWaitTime),
         new ParallelRaceGroup(
           new BringArm(arm, () -> kArmInsidePosition, false),
-          new WaitUntilCommand(() -> arm.getEncoderDistance() > kArmMidCubePosition).andThen(new BringElevator(elevator, kElevatorLowNodePosition, true))
+          new WaitUntilCommand(() -> arm.getEncoderDistance() > kArmMidCubePosition).andThen(new BringElevator(elevator, () -> kElevatorLowNodePosition, true))
         )
       ).unless(clamp::getSolenoidStateInverse)
     );
