@@ -12,8 +12,8 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.cscore.HttpCamera;
-import edu.wpi.first.cscore.MjpegServer;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import frc.robot.Constants.VisionConstants;
 
 /** Add your docs here. */
@@ -29,10 +29,9 @@ public final class VisionContainer {
         return poseEstimator.update();
     }
     
-    HttpCamera streamCamera = new HttpCamera("intakeoscope", "http://photonvision.local:5800");
-    MjpegServer mjpegServer = new MjpegServer("intakeopipe", 1181);
+    UsbCamera intakecam = CameraServer.startAutomaticCapture();
     
     public VisionContainer() {
-        mjpegServer.setSource(streamCamera);
+        intakecam.setResolution(640, 480);
     }
 }

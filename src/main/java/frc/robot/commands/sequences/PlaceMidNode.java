@@ -5,7 +5,6 @@
 package frc.robot.commands.sequences;
 
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
@@ -27,13 +26,11 @@ import static frc.robot.Constants.ManipulatorConstants.*;
 public class PlaceMidNode extends SequentialCommandGroup {
   /** Creates a new PlaceMidNode. */
   public PlaceMidNode(ArmSubsystem arm, ElevatorSubsystem elevator, ClampSubsystem clamp, XboxController controller) {
-    SmartDashboard.putBoolean("clamp mode command supplier", clamp.isClampInCubeMode());
-    if(clamp.isClampInCubeMode()){
-      SmartDashboard.putBoolean("command clamp mode", true);
-      addCommands(
+    addCommands(
+      new SequentialCommandGroup(
         new ParallelCommandGroup(
           new BringElevator(elevator, kElevatorMidCubePosistion, true),
-          new BringArm(arm, () -> kArmMidCubePosition, true)
+          new WaitUntilCommand(() -> elevator.getEncoderDistance() > kElevatorMidCubePosistion).andThen(new BringArm(arm, () -> kArmMidCubePosition, true))
         ),
         new ParallelRaceGroup(
           new WaitUntilCommand(controller::getAButton),
@@ -47,10 +44,8 @@ public class PlaceMidNode extends SequentialCommandGroup {
           new BringElevator(elevator, kElevatorLowNodePosition, true),
           new BringArm(arm, () -> kArmInsidePosition, true)
         )
-      );
-    }else{
-      SmartDashboard.putBoolean("command clamp mode", false);
-      addCommands(
+      ).unless(clamp::getSolenoidState),
+      new SequentialCommandGroup(
         new BringElevator(elevator, kElevatorHighPosition, true),
         new BringArm(arm, () -> kArmMidConePosition, true),
         new ParallelRaceGroup(
@@ -66,8 +61,7 @@ public class PlaceMidNode extends SequentialCommandGroup {
           new BringArm(arm, () -> kArmInsidePosition, false),
           new WaitUntilCommand(() -> arm.getEncoderDistance() > kArmMidCubePosition).andThen(new BringElevator(elevator, kElevatorLowNodePosition, true))
         )
-      );
-      addRequirements(arm, elevator, clamp);
-    }
+      ).unless(clamp::getSolenoidStateInverse)
+    );
   }
 }

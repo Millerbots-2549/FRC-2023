@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.BringArm;
 import frc.robot.commands.BringElevator;
 import frc.robot.commands.ClampShoot;
@@ -26,24 +25,18 @@ import java.util.function.BooleanSupplier;
 public class PlaceHybridNode extends SequentialCommandGroup {
   /** Creates a new PlaceHybridNode. */
   public PlaceHybridNode(ArmSubsystem arm, ClampSubsystem clamp, ElevatorSubsystem elevator, BooleanSupplier wait) {
-    if(clamp.isClampInCubeMode())
-      addCommands(
-        new ParallelCommandGroup(
-          new BringArm(arm, () -> kArmBumperPosistion, true),
-          new BringElevator(elevator, kElevatorLowNodePosition, true)),
-        new ClampShoot(clamp).withTimeout(kClampShootDuration),
-        new WaitCommand(kPlaceCommandWaitTime),
-        new BringArm(arm, () -> kArmInsidePosition, true)
-      );
-    else
-      addCommands(
-        new ParallelCommandGroup(
-          new BringArm(arm, () -> kArmIntakePosition, true),
-          new BringElevator(elevator, kElevatorLowNodePosition, true)),
-        new WaitUntilCommand(wait),
-        new InstantCommand(clamp::toggleSolenoid),
-        new WaitCommand(kPlaceCommandWaitTime),
-        new BringArm(arm, () -> kArmInsidePosition, true)
-      ); 
+    addCommands(
+      new ParallelCommandGroup(
+        new BringArm(arm, () -> kArmBumperPosistion, true),
+        new BringElevator(elevator, kElevatorLowNodePosition, true)).unless(clamp::getSolenoidState),
+      new ClampShoot(clamp).withTimeout(kClampShootDuration).unless(clamp::getSolenoidState),
+      new WaitCommand(kPlaceCommandWaitTime).unless(clamp::getSolenoidState),
+      new ParallelCommandGroup(
+        new BringArm(arm, () -> kArmIntakePosition, true),
+        new BringElevator(elevator, kElevatorLowNodePosition, true)).unless(clamp::getSolenoidStateInverse),
+      new InstantCommand(clamp::toggleSolenoid).unless(clamp::getSolenoidStateInverse),
+      new WaitCommand(kPlaceCommandWaitTime).unless(clamp::getSolenoidStateInverse),
+      new BringArm(arm, () -> kArmInsidePosition, true)
+    ); 
   }
 }
