@@ -124,14 +124,14 @@ public final class Constants {
         public static final double kElevatorIntakePosition = -0.20; 
         public static final double kElevatorLowNodePosition = 0.0;
         public static final double kElevatorMidCubePosistion = 0.5;
-        public static final double kElevatorHighPosition = 0.80;
-        public static final double kElevatorHighestPosition = 0.82;
+        public static final double kElevatorHighPosition = 0.83;
+        public static final double kElevatorHighestPosition = 0.85;
 
         public static final double kElevatorFeedforwardKS = 0.1389;
         public static final double kElevatorFeedforwardKG = 0.14061;
         public static final double kElevatorFeedforwardKV = 39.188;
         public static final double kElevatorFeedforwardKA = 0.58921;
-        public static final double kElevatorMotorKP = 10.0;
+        public static final double kElevatorMotorKP = 12.0;
         public static final double kElevatorMaxVelocity = 0.25;
         public static final double kElevatorMaxAcceleration = 1.0;
         public static final double kElevatorPositionTolerance = 0.01;

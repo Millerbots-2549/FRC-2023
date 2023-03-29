@@ -25,18 +25,18 @@ import java.util.function.BooleanSupplier;
 public class PlaceHybridNode extends SequentialCommandGroup {
   /** Creates a new PlaceHybridNode. */
   public PlaceHybridNode(ArmSubsystem arm, ClampSubsystem clamp, ElevatorSubsystem elevator, BooleanSupplier wait) {
-    addCommands(
-      new ParallelCommandGroup(
-        new BringArm(arm, () -> kArmBumperPosistion, true),
-        new BringElevator(elevator, () -> kElevatorLowNodePosition, true)).unless(clamp::getSolenoidState),
+    addCommands( //TODO: FIX THIS SHIT AND ALL THE OTHER COMMANDS
+      new BringArm(arm, () -> elevator.getEncoderDistance() < kElevatorLowNodePosition ? kArmIntakePosition : kArmBumperPosistion, true).unless(clamp::getSolenoidState),
+      new BringElevator(elevator, () -> arm.getEncoderDistance() < kArmBumperPosistion ? elevator.getEncoderDistance() : kElevatorLowNodePosition, true).unless(clamp::getSolenoidState),
       new ClampShoot(clamp).withTimeout(kClampShootDuration).unless(clamp::getSolenoidState),
       new WaitCommand(kPlaceCommandWaitTime).unless(clamp::getSolenoidState),
       new ParallelCommandGroup(
         new BringArm(arm, () -> kArmIntakePosition, true),
-        new BringElevator(elevator, () -> kElevatorLowNodePosition, true)).unless(clamp::getSolenoidStateInverse),
+        new BringElevator(elevator, () -> arm.getEncoderDistance() < kArmBumperPosistion ? elevator.getEncoderDistance() : kElevatorLowNodePosition, true)).unless(clamp::getSolenoidStateInverse),
       new InstantCommand(clamp::toggleSolenoid).unless(clamp::getSolenoidStateInverse),
       new WaitCommand(kPlaceCommandWaitTime).unless(clamp::getSolenoidStateInverse),
-      new BringArm(arm, () -> kArmInsidePosition, true)
+      new BringArm(arm, () -> kArmInsidePosition, true),
+      new BringElevator(elevator, () -> kElevatorMidCubePosistion, true)
     ); 
   }
 }

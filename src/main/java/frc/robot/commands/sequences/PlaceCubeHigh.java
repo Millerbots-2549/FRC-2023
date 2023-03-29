@@ -38,7 +38,7 @@ public class PlaceCubeHigh extends SequentialCommandGroup {
       new ClampShoot(clamp).withTimeout(kClampShootDuration),
       new ParallelRaceGroup(
         new BringArm(arm, () -> kArmInsidePosition, false),
-        new WaitUntilCommand(() -> arm.getEncoderDistance() > kArmMidCubePosition).andThen(new BringElevator(elevator, () -> kElevatorLowNodePosition, true)) 
+        new WaitUntilCommand(() -> arm.getEncoderDistance() > kArmMidCubePosition).andThen(new BringElevator(elevator, () -> kElevatorMidCubePosistion, true)) 
       )
     );
   }

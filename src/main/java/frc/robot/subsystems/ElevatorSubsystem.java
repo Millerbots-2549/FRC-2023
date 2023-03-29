@@ -63,6 +63,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void resetEncoder() {
-    m_elevatorEncoder.setPosition(0.0);
+    m_elevatorEncoder.setPosition(kElevatorMidCubePosistion);
   }
 }

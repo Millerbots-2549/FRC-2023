@@ -27,6 +27,7 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("arm encoder", m_armEncoder.getDistance());
+    SmartDashboard.putNumber("arm current", m_armMotor.getOutputCurrent());
   }
 
   public void setMotorSpeed(double speed) {

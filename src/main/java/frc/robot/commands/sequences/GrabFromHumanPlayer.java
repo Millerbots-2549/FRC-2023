@@ -5,10 +5,12 @@
 package frc.robot.commands.sequences;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.BringArm;
 import frc.robot.commands.BringElevator;
 import frc.robot.commands.ClampIntake;
@@ -30,13 +32,22 @@ public class GrabFromHumanPlayer extends SequentialCommandGroup {
         new BringArm(arm, () -> kArmInsidePosition, false),
         new BringElevator(elevator, () -> kElevatorHighPosition, true)
       ),
+      new ClampIntake(clamp, controller).withTimeout(0.5),
       new ParallelCommandGroup(
         new ClampIntake(clamp, controller),
-        new RunCommand(() -> arm.setMotorSpeed(controller.getRightY()))
-      ).until(() -> clamp.getAverageMotorSpeeds() < kClampVelocityDeadzone),
-      new BringElevator(elevator, () -> kElevatorHighestPosition, true),
-      new BringArm(arm, () -> kArmInsidePosition, true),
-      new BringElevator(elevator, () -> kElevatorLowNodePosition, true)
+        new RunCommand(() -> {
+          arm.setMotorSpeed(controller.getRightY());
+        })).until(() -> clamp.getAverageMotorSpeeds() < kClampVelocityDeadzone),
+      new ParallelRaceGroup(
+        new RunCommand(() -> clamp.setClampMotorSpeeds(kClampHoldVelocity, kClampHoldCurrentLimit), clamp),
+        new SequentialCommandGroup(
+          new BringElevator(elevator, () -> kElevatorHighestPosition, true),
+          new ParallelRaceGroup(
+            new BringArm(arm, () -> kArmInsidePosition, false),
+            new WaitUntilCommand(() -> arm.getEncoderDistance() > kArmBumperPosistion).andThen(new BringElevator(elevator, () -> kElevatorMidCubePosistion, true))
+          )
+        )
+      )
     );
   }
 }

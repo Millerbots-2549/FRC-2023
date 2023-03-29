@@ -5,7 +5,9 @@
 package frc.robot.commands.sequences;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.BringArm;
 import frc.robot.commands.BringElevator;
 import frc.robot.commands.ClampIntake;
@@ -27,8 +29,10 @@ public class Intake extends SequentialCommandGroup {
       new BringElevator(elevator, () -> kElevatorIntakePosition, true),
       new ClampIntake(clamp, controller).withTimeout(0.5),
       new ClampIntake(clamp, controller).until(() -> clamp.getAverageMotorSpeeds() < kClampVelocityDeadzone),
-      new BringElevator(elevator, () -> kElevatorLowNodePosition, true),
-      new BringArm(arm, () -> kArmInsidePosition, true)
+      new ParallelCommandGroup(
+        new BringElevator(elevator, () -> kElevatorLowNodePosition, true),
+        new WaitUntilCommand(() -> elevator.getEncoderDistance() > kElevatorLowNodePosition).andThen(new BringArm(arm, () -> kArmInsidePosition, true))
+      )
     );
   }
 }

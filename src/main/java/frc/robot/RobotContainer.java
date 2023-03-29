@@ -28,6 +28,7 @@ import frc.robot.commands.sequences.AutoHighCubeBalance;
 import frc.robot.commands.sequences.AutoPlaceCube;
 import frc.robot.commands.sequences.BalanceOnChargeStation;
 import frc.robot.commands.sequences.DebugDriveSpeedBalancing;
+import frc.robot.commands.sequences.GrabFromHumanPlayer;
 import frc.robot.commands.sequences.Intake;
 import frc.robot.commands.sequences.PlaceCubeHigh;
 import frc.robot.commands.sequences.PlaceHybridNode;
@@ -62,7 +63,7 @@ public class RobotContainer {
     m_driveSubsystem.setDefaultCommand(new RunCommand(() -> m_driveSubsystem.arcadeDrive(-m_driverController.getLeftY(), -m_driverController.getLeftX()), m_driveSubsystem));
     m_clampSubsystem.setDefaultCommand(new RunCommand(() -> m_clampSubsystem.setClampMotorSpeeds(kClampHoldVelocity, kClampHoldCurrentLimit), m_clampSubsystem).handleInterrupt(() -> m_manipulatorController.getAButtonPressed()));
     m_armSubsystem.setDefaultCommand(new BringArm(m_armSubsystem, () -> (m_elevatorSubsystem.getEncoderDistance() > (kElevatorLowNodePosition - kElevatorPositionTolerance)) ? kArmInsidePosition : kArmIntakePosition, false));
-    m_elevatorSubsystem.setDefaultCommand(new BringElevator(m_elevatorSubsystem, () -> (m_elevatorSubsystem.getEncoderDistance() > kElevatorLowNodePosition && m_armSubsystem.getEncoderDistance() < kArmBumperPosistion) ? m_elevatorSubsystem.getEncoderDistance() : kElevatorLowNodePosition, false));
+    m_elevatorSubsystem.setDefaultCommand(new BringElevator(m_elevatorSubsystem, () -> (m_elevatorSubsystem.getEncoderDistance() > kElevatorLowNodePosition && m_armSubsystem.getEncoderDistance() < kArmBumperPosistion) ? m_elevatorSubsystem.getEncoderDistance() : kElevatorMidCubePosistion, false));
     // Configure the button bindings
     configureBindings();
 
@@ -86,11 +87,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureBindings() {
-    //new JoystickButton(m_manipulatorController, Button.kA.value).onTrue(new Intake(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController::getLeftBumperPressed));
-    //new JoystickButton(m_manipulatorController, Button.kY.value).onTrue(new GrabFromHumanPlayer(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController::getBButtonPressed));
-
-    new JoystickButton(m_driverController, Button.kA.value).onTrue(new BalanceOnChargeStation(m_driveSubsystem));
-    new JoystickButton(m_driverController, Button.kY.value).onTrue(new DriveStraight(0, false, m_driveSubsystem, m_driveSubsystem.getHeading()).withTimeout(1.0));
 
     new JoystickButton(m_driverController, Button.kB.value).onTrue(new InstantCommand(() -> m_driveSubsystem.tankDrive(0.0, 0.0), m_driveSubsystem));
 
@@ -114,7 +110,8 @@ public class RobotContainer {
 
     new POVButton(m_manipulatorController, 180).onTrue(new PlaceHybridNode(m_armSubsystem, m_clampSubsystem, m_elevatorSubsystem, m_manipulatorController::getAButton));
     new POVButton(m_manipulatorController, 90).onTrue(new PlaceMidNode(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController));
-    new POVButton(m_manipulatorController, 0).onTrue(new PlaceCubeHigh(m_armSubsystem, m_clampSubsystem, m_elevatorSubsystem, m_manipulatorController));
+    new POVButton(m_manipulatorController, 270).onTrue(new PlaceCubeHigh(m_armSubsystem, m_clampSubsystem, m_elevatorSubsystem, m_manipulatorController));
+    new POVButton(m_manipulatorController, 0).onTrue(new GrabFromHumanPlayer(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController));
   }
 
   

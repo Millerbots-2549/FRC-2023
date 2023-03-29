@@ -7,6 +7,7 @@ package frc.robot.commands.sequences;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.Constants.ManipulatorConstants;
 import frc.robot.commands.BringArm;
 import frc.robot.commands.BringElevator;
 import frc.robot.commands.ClampShoot;
@@ -31,7 +32,7 @@ public class AutoPlaceCube extends SequentialCommandGroup {
       new ClampShoot(clamp).withTimeout(kClampShootDuration),
       new ParallelRaceGroup(
         new BringArm(arm, () -> kArmInsidePosition, false),
-        new WaitUntilCommand(() -> arm.getEncoderDistance() > kArmMidCubePosition)).andThen(new BringElevator(elevator, () -> kElevatorLowNodePosition, true)
+        new WaitUntilCommand(() -> arm.getEncoderDistance() > kArmBumperPosistion)).andThen(new BringElevator(elevator, () -> kElevatorMidCubePosistion, true)
       )
     );
   }
