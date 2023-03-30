@@ -25,16 +25,27 @@ import java.util.function.BooleanSupplier;
 public class PlaceHybridNode extends SequentialCommandGroup {
   /** Creates a new PlaceHybridNode. */
   public PlaceHybridNode(ArmSubsystem arm, ClampSubsystem clamp, ElevatorSubsystem elevator, BooleanSupplier wait) {
-    addCommands( //TODO: FIX THIS SHIT AND ALL THE OTHER COMMANDS
-      new BringArm(arm, () -> elevator.getEncoderDistance() < kElevatorLowNodePosition ? kArmIntakePosition : kArmBumperPosistion, true).unless(clamp::getSolenoidState),
-      new BringElevator(elevator, () -> arm.getEncoderDistance() < kArmBumperPosistion ? elevator.getEncoderDistance() : kElevatorLowNodePosition, true).unless(clamp::getSolenoidState),
-      new ClampShoot(clamp).withTimeout(kClampShootDuration).unless(clamp::getSolenoidState),
-      new WaitCommand(kPlaceCommandWaitTime).unless(clamp::getSolenoidState),
-      new ParallelCommandGroup(
-        new BringArm(arm, () -> kArmIntakePosition, true),
-        new BringElevator(elevator, () -> arm.getEncoderDistance() < kArmBumperPosistion ? elevator.getEncoderDistance() : kElevatorLowNodePosition, true)).unless(clamp::getSolenoidStateInverse),
-      new InstantCommand(clamp::toggleSolenoid).unless(clamp::getSolenoidStateInverse),
-      new WaitCommand(kPlaceCommandWaitTime).unless(clamp::getSolenoidStateInverse),
+    addCommands( 
+      new SequentialCommandGroup( 
+        //cube
+        new ParallelCommandGroup(
+          new BringArm(arm, () -> elevator.getEncoderDistance() < (kElevatorLowNodePosition-kElevatorPositionTolerance) ? kArmIntakePosition : kArmBumperPosistion, true),
+          new BringElevator(elevator, () -> elevator.getEncoderDistance() < kElevatorLowNodePosition ? kElevatorLowNodePosition : (arm.getEncoderDistance() < kArmBumperPosistion ? elevator.getEncoderDistance() : kElevatorLowNodePosition), true)
+        ),
+        new ClampShoot(clamp).withTimeout(kClampShootDuration),
+        new WaitCommand(kPlaceCommandWaitTime)
+      ).unless(clamp::getSolenoidState),
+
+      new SequentialCommandGroup( 
+        //cone
+        new ParallelCommandGroup(
+          new BringArm(arm, () -> kArmIntakePosition, true),
+          new BringElevator(elevator, () -> arm.getEncoderDistance() < (kArmIntakePosition-kArmPositionTolerance) ? elevator.getEncoderDistance() : kElevatorLowNodePosition, true)
+        ),
+        new InstantCommand(clamp::toggleSolenoid)
+      ).unless(clamp::getSolenoidStateInverse),
+      
+      new WaitCommand(kPlaceCommandWaitTime),
       new BringArm(arm, () -> kArmInsidePosition, true),
       new BringElevator(elevator, () -> kElevatorMidCubePosistion, true)
     ); 

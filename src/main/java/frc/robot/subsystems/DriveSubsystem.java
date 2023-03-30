@@ -74,7 +74,7 @@ public class DriveSubsystem extends SubsystemBase {
   private final DifferentialDrivePoseEstimator m_poseEstimator = 
     new DifferentialDrivePoseEstimator(
       m_kinematics,
-      new Rotation2d(Units.degreesToRadians(m_gyro.getGyroAngleZ())), 
+      new Rotation2d(Units.degreesToRadians(getHeading())), 
       m_leftEncoder.getDistance(), 
       m_rightEncoder.getDistance(), 
       new Pose2d());
@@ -148,7 +148,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void updateOdometry() {
-    m_poseEstimator.update(new Rotation2d(Units.degreesToRadians(m_gyro.getGyroAngleZ())), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+    m_poseEstimator.update(new Rotation2d(Units.degreesToRadians(getHeading())), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
 
     Optional<EstimatedRobotPose> result = visionContainer.getEstimatedRobotPose();
 
@@ -219,12 +219,12 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void resetOdometry(Pose2d pose){
     resetEncoders();
-    m_poseEstimator.resetPosition(new Rotation2d(Units.degreesToRadians(m_gyro.getGyroAngleZ())), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), pose);  
+    m_poseEstimator.resetPosition(new Rotation2d(Units.degreesToRadians(getHeading())), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), pose);  
   }
 
   // Returns heading of robot, with range -180 to 180
   public double getHeading() {
-    return m_gyro.getGyroAngleZ();
+    return -m_gyro.getGyroAngleZ();
   }
 
   // Returns turn rate of robot, in degrees/sec

@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
@@ -19,14 +16,10 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import static frc.robot.Constants.ManipulatorConstants.*;
 
-import java.io.IOException;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.BringArm;
 import frc.robot.commands.BringElevator;
-import frc.robot.commands.DriveStraight;
 import frc.robot.commands.sequences.AutoHighCubeBalance;
-import frc.robot.commands.sequences.AutoPlaceCube;
-import frc.robot.commands.sequences.BalanceOnChargeStation;
+import frc.robot.commands.sequences.AutoRedLeftTaxi;
 import frc.robot.commands.sequences.DebugDriveSpeedBalancing;
 import frc.robot.commands.sequences.GrabFromHumanPlayer;
 import frc.robot.commands.sequences.Intake;
@@ -70,14 +63,6 @@ public class RobotContainer {
     //Creates options for the command chooser
     m_chooser.addOption("Red/Blue Mid Cube Balance", new AutoHighCubeBalance(m_armSubsystem, m_clampSubsystem, m_elevatorSubsystem, m_driveSubsystem));
     m_chooser.addOption("debug drivetrain", new DebugDriveSpeedBalancing(m_driveSubsystem));
-    for(int i = 0; i < 4; i++)
-      try{
-        Trajectory traj = TrajectoryUtil.fromPathweaverJson(DriveConstants.kAutoTrajectories[i]);
-        m_chooser.addOption(DriveConstants.kAutoNames[i], new AutoPlaceCube(m_armSubsystem, m_clampSubsystem, m_elevatorSubsystem, kArmMidConePosition, kElevatorHighPosition).andThen(
-          m_driveSubsystem.getRamseteCommand(traj.transformBy(new Transform2d(m_driveSubsystem.getPose(), traj.getInitialPose())))));
-      }catch (IOException e){
-        e.printStackTrace();
-      }
     SmartDashboard.putData(m_chooser);
   }
   /**
@@ -122,6 +107,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return m_chooser.getSelected();
+    
+    return new AutoRedLeftTaxi(m_driveSubsystem);
+    //return m_chooser.getSelected();
   }
 }

@@ -40,6 +40,8 @@ public final class Constants {
 
         public static final double kEncoderDistancePerPulse = (Units.inchesToMeters(6.0)*Math.PI)/360;
 
+        public static final double kDriveAutoSpeed = 0.4;
+
         public static final double kPDriveVel = 5.0952;
         public static final double ksVolts = 1.0493;
         public static final double kvVoltSecondsPerMeter = 3.2019;
@@ -82,9 +84,8 @@ public final class Constants {
 
         public static final double kArmJoystickDeadzone = 0.05;
 
-        public static final double kArmMotorStallCurrent = 16.0;
-        public static final double kArmMotorAutoSpeed = 0.5;
-        public static final double kArmMotorGrabSpeed = 0.2;
+        public static final double kArmCalibrationSpeed = 0.75;
+        public static final double kArmMotorStallCurrent = 19.5;
 
         public static final double kArmInsidePosition = 0.0;
         public static final double kArmBumperPosistion = -0.05;
@@ -141,7 +142,7 @@ public final class Constants {
 
     public static final class VisionConstants {
         public static final String kCameraName = "OV5647";
-        public static final Transform3d kRobotToCamTransform = new Transform3d(new Translation3d(0, 0, 1.3255625), new Rotation3d(0, -15.0, 0)); // TODO: add
+        public static final Transform3d kRobotToCamTransform = new Transform3d(new Translation3d(0, 0, 1.3255625), new Rotation3d(0, Units.degreesToRadians(15), 0)); // TODO: add
 
         // Defining objects representing AprilTags on the field
         public static final Translation3d[] AprilTagLocations = {

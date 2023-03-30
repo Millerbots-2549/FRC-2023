@@ -9,7 +9,6 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClampSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
-import static frc.robot.Constants.ManipulatorConstants.*;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -20,7 +19,7 @@ public class AutoHighCubeBalance extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new AutoPlaceCube(arm, clamp, elevator, kArmMidConePosition, kElevatorHighPosition),
+      new AutoPlaceCubeHigh(arm, clamp, elevator),
       new BalanceOnChargeStation(drive)
     );
   }

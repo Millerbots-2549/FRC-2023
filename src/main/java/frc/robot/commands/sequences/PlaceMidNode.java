@@ -28,8 +28,9 @@ public class PlaceMidNode extends SequentialCommandGroup {
   public PlaceMidNode(ArmSubsystem arm, ElevatorSubsystem elevator, ClampSubsystem clamp, XboxController controller) {
     addCommands(
       new SequentialCommandGroup(
+        //cube
         new ParallelCommandGroup(
-          new BringElevator(elevator, () -> kElevatorMidCubePosistion, true),
+          new BringElevator(elevator, () -> arm.getEncoderDistance() < (kArmMidCubePosition-kArmPositionTolerance) ? elevator.getEncoderDistance() : kElevatorMidCubePosistion, true),
           new WaitUntilCommand(() -> elevator.getEncoderDistance() > kElevatorMidCubePosistion).andThen(new BringArm(arm, () -> kArmMidCubePosition, true))
         ),
         new ParallelRaceGroup(
@@ -42,7 +43,9 @@ public class PlaceMidNode extends SequentialCommandGroup {
         new ClampShoot(clamp).withTimeout(kClampShootDuration),
         new BringArm(arm, () -> kArmInsidePosition, true)
       ).unless(clamp::getSolenoidState),
+
       new SequentialCommandGroup(
+        //cone
         new BringElevator(elevator, () -> kElevatorHighPosition, true),
         new BringArm(arm, () -> kArmMidConePosition, true),
         new ParallelRaceGroup(

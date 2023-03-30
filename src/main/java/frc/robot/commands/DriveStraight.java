@@ -4,37 +4,46 @@
 
 package frc.robot.commands;
 
-import java.util.List;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.DriveConstants;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class DriveStraight extends SequentialCommandGroup {
+public class DriveStraight extends CommandBase {
+  private final DriveSubsystem m_driveSubsystem;
+  private final double kSpeed;
+  private final double kHeading;
+
   /** Creates a new DriveStraight. */
-  public DriveStraight(double speed, boolean backwards, DriveSubsystem subsystem, double heading) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    addCommands(
-      new RamseteCommand(TrajectoryGenerator.generateTrajectory(subsystem.getPose(), List.of(new Translation2d(subsystem.getPose().getX() + 100*Math.cos(heading)*((backwards) ? -1 : 1), subsystem.getPose().getY() + 100*Math.sin(heading)*((backwards) ? -1 : 1))), subsystem.getPose(), subsystem.getTrajectoryConfig(speed)), 
-        subsystem::getPose, 
-        new RamseteController(),
-        new SimpleMotorFeedforward(speed, speed),
-        subsystem.getKinematics(), 
-        subsystem::getWheelSpeeds,
-        new PIDController(DriveConstants.kPDriveVel, 0, 0),
-        new PIDController(DriveConstants.kPDriveVel, 0, 0),
-        (a, b) -> subsystem.tankDriveVolts(a, b),
-        subsystem)
-    );
+  public DriveStraight(DriveSubsystem drive, double speed, double heading) {
+    m_driveSubsystem = drive;
+    kSpeed = speed;
+    kHeading = heading;
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(drive);
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {}
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+    double error = (m_driveSubsystem.getPose().getRotation().getDegrees() < -90) ? m_driveSubsystem.getPose().getRotation().getDegrees() + 360 : m_driveSubsystem.getPose().getRotation().getDegrees();
+    error -= kHeading;
+    double leftDriveSpeed = kSpeed + error*0.01;
+    double rightDriveSpeed = kSpeed - error*0.01;
+    m_driveSubsystem.tankDrive(leftDriveSpeed, rightDriveSpeed);
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    m_driveSubsystem.tankDrive(0, 0);
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return false;
   }
 }

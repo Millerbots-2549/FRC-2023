@@ -5,7 +5,6 @@
 package frc.robot.commands.sequences;
 
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -28,26 +27,20 @@ public class GrabFromHumanPlayer extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ParallelRaceGroup(
-        new BringArm(arm, () -> kArmInsidePosition, false),
-        new BringElevator(elevator, () -> kElevatorHighPosition, true)
-      ),
+      new BringElevator(elevator, () -> kElevatorHighPosition, true).raceWith(
+        new BringArm(arm, () -> kArmInsidePosition, false)),
       new ClampIntake(clamp, controller).withTimeout(0.5),
       new ParallelCommandGroup(
         new ClampIntake(clamp, controller),
-        new RunCommand(() -> {
-          arm.setMotorSpeed(controller.getRightY());
-        })).until(() -> clamp.getAverageMotorSpeeds() < kClampVelocityDeadzone),
-      new ParallelRaceGroup(
-        new RunCommand(() -> clamp.setClampMotorSpeeds(kClampHoldVelocity, kClampHoldCurrentLimit), clamp),
-        new SequentialCommandGroup(
-          new BringElevator(elevator, () -> kElevatorHighestPosition, true),
-          new ParallelRaceGroup(
-            new BringArm(arm, () -> kArmInsidePosition, false),
-            new WaitUntilCommand(() -> arm.getEncoderDistance() > kArmBumperPosistion).andThen(new BringElevator(elevator, () -> kElevatorMidCubePosistion, true))
-          )
+        new RunCommand(() -> arm.setMotorSpeed(controller.getRightY()))
+      ).until(() -> clamp.getAverageMotorSpeeds() < kClampVelocityDeadzone),
+      new SequentialCommandGroup(
+        new BringElevator(elevator, () -> kElevatorHighestPosition, true),
+        new ParallelRaceGroup(
+          new BringArm(arm, () -> kArmInsidePosition, false),
+          new WaitUntilCommand(() -> arm.getEncoderDistance() > kArmBumperPosistion).andThen(new BringElevator(elevator, () -> kElevatorMidCubePosistion, true))
         )
-      )
+      ).raceWith(new RunCommand(() -> clamp.setClampMotorSpeeds(kClampHoldVelocity, kClampHoldCurrentLimit), clamp))
     );
   }
 }

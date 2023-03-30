@@ -6,11 +6,10 @@ package frc.robot.commands.sequences;
 
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Constants.ManipulatorConstants;
 import frc.robot.commands.BringArm;
 import frc.robot.commands.BringElevator;
 import frc.robot.commands.ClampShoot;
+import frc.robot.commands.ZeroArm;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClampSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -19,21 +18,20 @@ import static frc.robot.Constants.ManipulatorConstants.*;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AutoPlaceCube extends SequentialCommandGroup {
+public class AutoPlaceCubeHigh extends SequentialCommandGroup {
   /** Creates a new AutoPlaceCube. */
-  public AutoPlaceCube(ArmSubsystem arm, ClampSubsystem clamp, ElevatorSubsystem elevator, double armPosition, double elevatorPosition) {
+  public AutoPlaceCubeHigh(ArmSubsystem arm, ClampSubsystem clamp, ElevatorSubsystem elevator) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new ParallelRaceGroup(
-        new BringElevator(elevator, () -> elevatorPosition, true),
-        new BringArm(arm, () -> armPosition, false)
+        new BringElevator(elevator, () -> kElevatorHighPosition, true),
+        new ZeroArm(arm).andThen(new BringArm(arm, () -> kArmInsidePosition, false))
       ),
+      new BringArm(arm, () -> kArmMidConePosition, true),
       new ClampShoot(clamp).withTimeout(kClampShootDuration),
-      new ParallelRaceGroup(
-        new BringArm(arm, () -> kArmInsidePosition, false),
-        new WaitUntilCommand(() -> arm.getEncoderDistance() > kArmBumperPosistion)).andThen(new BringElevator(elevator, () -> kElevatorMidCubePosistion, true)
-      )
+      new BringArm(arm, () -> kArmInsidePosition, true),
+      new BringElevator(elevator, () -> kElevatorMidCubePosistion, true).raceWith(new BringArm(arm, () -> kArmInsidePosition, false))
     );
   }
 }
