@@ -21,8 +21,17 @@ public class BalanceOnChargeStation extends SequentialCommandGroup {
     addCommands(
       new InstantCommand(() -> subsystem.resetGyro(), subsystem),
       new RunCommand(() -> subsystem.tankDrive(kBalanceWheelSpeedHigh, kBalanceWheelSpeedHigh), subsystem).until(() -> subsystem.getRobotPitch() < kBalanceAirPitch),
-      new RunCommand(() -> subsystem.tankDrive(subsystem.getWheelSpeeds().leftMetersPerSecond > 0.025 ? (kBalanceWheelSpeedLowVolts - 0.25) : kBalanceWheelSpeedLowVolts, subsystem.getWheelSpeeds().leftMetersPerSecond > 0.025 ? (kBalanceWheelSpeedLowVolts - 0.25) : kBalanceWheelSpeedLowVolts), subsystem).until(() -> subsystem.getRobotPitch() > kBalanceDropPitch),
-      new InstantCommand(() -> subsystem.tankDrive(0.0, 0.0))
+      new RunCommand(() -> {
+        subsystem.tankDrive(-0.52, -0.52);
+      }, subsystem).until(() -> subsystem.getRobotPitch() > kBalanceDropPitch),
+     
+      new RunCommand(() -> {
+
+        if(Math.abs(subsystem.getRobotPitch()) > kBalanceHomeostasisPitch)
+          subsystem.tankDrive(0.46*Math.signum(subsystem.getRobotPitch()), 0.46*Math.signum(subsystem.getRobotPitch()));
+        else
+          subsystem.tankDrive(0.0, 0.0);
+      }, subsystem)
     );
   }
 }

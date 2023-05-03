@@ -26,7 +26,7 @@ public class Intake extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new BringArm(arm, () -> kArmIntakePosition, true),
-      new BringElevator(elevator, () -> kElevatorIntakePosition, true),
+      new BringElevator(elevator, () -> kElevatorIntakePosition, true).until(() -> elevator.getEncoderVelocity() == 0),
       new ClampIntake(clamp, controller).withTimeout(0.5),
       new ClampIntake(clamp, controller).until(() -> clamp.getAverageMotorSpeeds() < kClampVelocityDeadzone),
       new ParallelRaceGroup(

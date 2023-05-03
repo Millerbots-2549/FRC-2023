@@ -31,11 +31,12 @@ public class PlaceMidNode extends SequentialCommandGroup {
         //cube
         new ParallelCommandGroup(
           new BringElevator(elevator, () -> arm.getEncoderDistance() < (kArmMidCubePosition-kArmPositionTolerance) ? elevator.getEncoderDistance() : kElevatorMidCubePosistion, true),
-          new WaitUntilCommand(() -> elevator.getEncoderDistance() > kElevatorMidCubePosistion).andThen(new BringArm(arm, () -> kArmMidCubePosition, true))
+          new WaitUntilCommand(() -> elevator.getEncoderDistance() > kElevatorMidCubePosistion-0.01).andThen(new BringArm(arm, () -> kArmMidCubePosition, true))
         ),
         new ParallelRaceGroup(
           new WaitUntilCommand(controller::getAButton),
           new RunCommand(() -> {
+
             arm.setMotorSpeed(controller.getRightY());
             elevator.setMotorSpeed(controller.getLeftY());
           }, arm, elevator)

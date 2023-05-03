@@ -64,7 +64,7 @@ public class DriveSubsystem extends SubsystemBase {
       kRightEncoderReversed);
 
   // Gyrometer sensor
-  private final ADIS16448_IMU m_gyro = new ADIS16448_IMU(ADIS16448_IMU.IMUAxis.kZ, SPI.Port.kMXP, ADIS16448_IMU.CalibrationTime._32s); 
+  private final ADIS16448_IMU m_gyro = new ADIS16448_IMU(ADIS16448_IMU.IMUAxis.kZ, SPI.Port.kMXP, ADIS16448_IMU.CalibrationTime._64s); 
   
   // Object that converts between robot speeds and wheel speeds
   private final DifferentialDriveKinematics m_kinematics = 
@@ -165,6 +165,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("Pose X", m_poseEstimator.getEstimatedPosition().getX());
     SmartDashboard.putNumber("Pose Y", m_poseEstimator.getEstimatedPosition().getY());
+    SmartDashboard.putNumber("Pose Theta", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
   }
 
   // Drives the drivetrain using two control schemes: arcade and tank

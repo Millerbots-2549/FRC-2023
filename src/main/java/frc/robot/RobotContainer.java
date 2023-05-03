@@ -18,8 +18,12 @@ import static frc.robot.Constants.ManipulatorConstants.*;
 
 import frc.robot.commands.BringArm;
 import frc.robot.commands.BringElevator;
+import frc.robot.commands.sequences.AutoBlueLeftTaxi;
 import frc.robot.commands.sequences.AutoHighCubeBalance;
+import frc.robot.commands.sequences.AutoPlaceCubeHigh;
 import frc.robot.commands.sequences.AutoRedLeftTaxi;
+import frc.robot.commands.sequences.AutoRedRightTaxi;
+import frc.robot.commands.sequences.BalanceOnChargeStation;
 import frc.robot.commands.sequences.DebugDriveSpeedBalancing;
 import frc.robot.commands.sequences.GrabFromHumanPlayer;
 import frc.robot.commands.sequences.Intake;
@@ -63,6 +67,12 @@ public class RobotContainer {
     //Creates options for the command chooser
     m_chooser.addOption("Red/Blue Mid Cube Balance", new AutoHighCubeBalance(m_armSubsystem, m_clampSubsystem, m_elevatorSubsystem, m_driveSubsystem));
     m_chooser.addOption("debug drivetrain", new DebugDriveSpeedBalancing(m_driveSubsystem));
+    m_chooser.addOption("just cube high", new AutoPlaceCubeHigh(m_armSubsystem, m_clampSubsystem, m_elevatorSubsystem));
+    m_chooser.addOption("just balence", new BalanceOnChargeStation(m_driveSubsystem));
+    m_chooser.addOption("red left taxi", new AutoRedLeftTaxi(m_armSubsystem, m_clampSubsystem, m_elevatorSubsystem, m_driveSubsystem));
+    m_chooser.addOption("red right taxi", new AutoRedRightTaxi(m_armSubsystem, m_clampSubsystem, m_elevatorSubsystem, m_driveSubsystem));
+    m_chooser.addOption("blue left taxi", new AutoBlueLeftTaxi(m_armSubsystem, m_clampSubsystem, m_elevatorSubsystem, m_driveSubsystem));
+    m_chooser.addOption("blue right taxi", new AutoBlueLeftTaxi(m_armSubsystem, m_clampSubsystem, m_elevatorSubsystem, m_driveSubsystem));
     SmartDashboard.putData(m_chooser);
   }
   /**
@@ -72,8 +82,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureBindings() {
-
-    new JoystickButton(m_driverController, Button.kB.value).onTrue(new InstantCommand(() -> m_driveSubsystem.tankDrive(0.0, 0.0), m_driveSubsystem));
 
     new JoystickButton(m_manipulatorController, Button.kY.value).onTrue(new Intake(m_armSubsystem, m_elevatorSubsystem, m_clampSubsystem, m_manipulatorController));
     new JoystickButton(m_manipulatorController, Button.kB.value).onTrue(new InstantCommand(() -> m_manipulatorController.getAButtonPressed()).andThen(
@@ -107,8 +115,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    
-    return new AutoRedLeftTaxi(m_driveSubsystem);
-    //return m_chooser.getSelected();
+    return m_chooser.getSelected();
   }
 }

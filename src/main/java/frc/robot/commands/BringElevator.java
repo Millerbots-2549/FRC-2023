@@ -21,6 +21,7 @@ public class BringElevator extends ProfiledPIDCommand {
 
   /** Creates a new BringElevator. */
   public BringElevator(ElevatorSubsystem elevator, DoubleSupplier kSetpoint, boolean ends) {
+
     super(
         // The ProfiledPIDController used by the command
         new ProfiledPIDController(

@@ -6,7 +6,6 @@ package frc.robot.commands.sequences;
 
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.DriveStraight;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClampSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -24,11 +23,11 @@ public class AutoRedLeftTaxi extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new AutoPlaceCubeHigh(arm, clamp, elevator),
-      new DriveStraight(drive, -kDriveAutoSpeed, 0).until(() -> drive.getPose().getX() < 14.5),
+      new RunCommand(() -> drive.tankDrive(-0.35, -0.35), drive).withTimeout(0.5),
       new RunCommand(() -> drive.tankDrive(-kDriveAutoSpeed, kDriveAutoSpeed), drive).until(() -> drive.getPose().getRotation().getDegrees() > 17),
-      new DriveStraight(drive, -kDriveAutoSpeed, 17).until(() -> drive.getPose().getY() < 0.725),
+      new RunCommand(() -> drive.tankDrive(-0.5, -0.5), drive).withTimeout(0.5),
       new RunCommand(() -> drive.tankDrive(kDriveAutoSpeed, -kDriveAutoSpeed), drive).until(() -> drive.getPose().getRotation().getDegrees() < 0),
-      new DriveStraight(drive, -kDriveAutoSpeed, 0).until(() -> drive.getPose().getX() < 10.7)
+      new RunCommand(() -> drive.tankDrive(-0.5, -0.5), drive).withTimeout(2.5)
     );
   }
 }

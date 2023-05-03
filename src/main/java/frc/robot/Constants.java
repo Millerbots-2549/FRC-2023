@@ -51,7 +51,8 @@ public final class Constants {
         public static final double kMaxAccelerationMetersPerSecondSquared = 1;
 
         public static final double kBalanceAirPitch = -14.0; // TODO: test
-        public static final double kBalanceDropPitch = -10.0;
+        public static final double kBalanceDropPitch = -12.0;
+        public static final double kBalanceHomeostasisPitch = 6.0;
         public static final double kBalanceWheelSpeedHigh = -0.80;
         public static final double kBalanceWheelSpeedLowVolts = -3.5;
 
@@ -84,7 +85,7 @@ public final class Constants {
 
         public static final double kArmJoystickDeadzone = 0.05;
 
-        public static final double kArmCalibrationSpeed = 0.75;
+        public static final double kArmCalibrationSpeed = 0.45;
         public static final double kArmMotorStallCurrent = 19.5;
 
         public static final double kArmInsidePosition = 0.0;
@@ -112,7 +113,7 @@ public final class Constants {
         public static final double kClampShootDuration = 0.5;
         public static final double kClampMotorStartTime = 0.5;
 
-        public static final double kClampVelocityDeadzone = 1.0;
+        public static final double kClampVelocityDeadzone = 60.0;
 
         public static final double kElevatorSprocketDiameterMeters = 0.0363728;
         public static final double kElevatorDistancePerPulse = Units.inchesToMeters(1.432*Math.PI/36);
@@ -135,7 +136,7 @@ public final class Constants {
         public static final double kElevatorMotorKP = 12.0;
         public static final double kElevatorMaxVelocity = 0.25;
         public static final double kElevatorMaxAcceleration = 1.0;
-        public static final double kElevatorPositionTolerance = 0.01;
+        public static final double kElevatorPositionTolerance = 0.015;
 
         public static final double kPlaceCommandWaitTime = 0.1;
     }

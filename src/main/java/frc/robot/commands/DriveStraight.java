@@ -30,6 +30,9 @@ public class DriveStraight extends CommandBase {
   public void execute() {
     double error = (m_driveSubsystem.getPose().getRotation().getDegrees() < -90) ? m_driveSubsystem.getPose().getRotation().getDegrees() + 360 : m_driveSubsystem.getPose().getRotation().getDegrees();
     error -= kHeading;
+    if(Math.abs(error) > 20){
+      error = 20 * Math.signum(error);
+    }
     double leftDriveSpeed = kSpeed + error*0.01;
     double rightDriveSpeed = kSpeed - error*0.01;
     m_driveSubsystem.tankDrive(leftDriveSpeed, rightDriveSpeed);
